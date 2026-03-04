@@ -1,9 +1,9 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Home, BarChart3, Heart, Wallet } from 'lucide-react'
+import { Home, BarChart3, Wallet, PiggyBank } from 'lucide-react'
 
-type Tab = 'home' | 'transacoes' | 'insights' | 'metas'
+type Tab = 'home' | 'transacoes' | 'insights' | 'planejamento'
 
 interface BottomNavProps {
   activeTab: Tab
@@ -14,7 +14,7 @@ const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: 'home', label: 'Inicio', icon: <Home className="h-5 w-5" /> },
   { id: 'transacoes', label: 'Gastos', icon: <Wallet className="h-5 w-5" /> },
   { id: 'insights', label: 'Insights', icon: <BarChart3 className="h-5 w-5" /> },
-  { id: 'metas', label: 'Metas', icon: <Heart className="h-5 w-5" /> },
+  { id: 'planejamento', label: 'Plano', icon: <PiggyBank className="h-5 w-5" /> },
 ]
 
 export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {

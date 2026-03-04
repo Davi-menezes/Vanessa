@@ -46,6 +46,32 @@ export interface HappinessGoal {
   lastSpentDaysAgo: number
 }
 
+export interface PiggyBank {
+  id: string
+  name: string
+  savedAmount: number
+  targetAmount: number
+  createdAt: string
+}
+
+export interface PlanningGoal {
+  id: string
+  title: string
+  type: 'viagem' | 'compra'
+  targetAmount: number
+  targetMonths: number
+  createdAt: string
+}
+
+export interface FixedCost {
+  id: string
+  name: string
+  amount: number
+  dueDay: number
+  category: 'moradia' | 'educacao' | 'transporte' | 'saude' | 'assinaturas' | 'outros'
+  createdAt: string
+}
+
 export const MOOD_CONFIG: Record<MoodType, { label: string; icon: string; color: string; isImpulsive: boolean }> = {
   ansiedade: { label: 'Ansiedade', icon: 'brain', color: 'text-vanessa-warning', isImpulsive: true },
   tedio: { label: 'Tedio', icon: 'meh', color: 'text-muted-foreground', isImpulsive: false },

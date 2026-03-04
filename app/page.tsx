@@ -9,7 +9,7 @@ import { AudioInput } from '@/components/vanessa/audio-input'
 import { HomeView } from '@/components/vanessa/home-view'
 import { TransactionsView } from '@/components/vanessa/transactions-view'
 import { InsightsView } from '@/components/vanessa/insights-view'
-import { HappinessGoals } from '@/components/vanessa/happiness-goals'
+import { PlanningView } from '@/components/vanessa/planning-view'
 import { AddTransactionForm } from '@/components/vanessa/add-transaction-form'
 import { BottomNav } from '@/components/vanessa/bottom-nav'
 import {
@@ -24,7 +24,7 @@ import {
 import { MOOD_CONFIG } from '@/lib/types'
 import type { MoodType, TransactionCategory, TransactionType, User } from '@/lib/types'
 
-type Tab = 'home' | 'transacoes' | 'insights' | 'metas'
+type Tab = 'home' | 'transacoes' | 'insights' | 'planejamento'
 
 export default function VanessaApp() {
   const [user, setUser] = useState<User | null>(null)
@@ -185,7 +185,7 @@ export default function VanessaApp() {
               />
             )}
             {activeTab === 'insights' && <InsightsView key={`insights-${refreshKey}`} />}
-            {activeTab === 'metas' && <HappinessGoals key={`metas-${refreshKey}`} />}
+            {activeTab === 'planejamento' && <PlanningView key={`planejamento-${refreshKey}`} />}
           </AnimatePresence>
 
           {/* Floating audio button */}

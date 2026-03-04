@@ -1,6 +1,6 @@
 'use client'
 
-import type { MoodEntry, Transaction, MoodType, TransactionCategory, User } from './types'
+import type { MoodEntry, Transaction, MoodType, TransactionCategory, User, PiggyBank, PlanningGoal, FixedCost } from './types'
 
 const USERS_KEY = 'vanessa_users'
 const SESSION_KEY = 'vanessa_session'
@@ -82,6 +82,21 @@ function getUserMoodsKey(): string {
 function getUserTransactionsKey(): string {
   const user = getCurrentUser()
   return user ? `vanessa_transactions_${user.id}` : 'vanessa_transactions'
+}
+
+function getUserPiggyBanksKey(): string {
+  const user = getCurrentUser()
+  return user ? `vanessa_piggy_banks_${user.id}` : 'vanessa_piggy_banks'
+}
+
+function getUserPlanningGoalsKey(): string {
+  const user = getCurrentUser()
+  return user ? `vanessa_planning_goals_${user.id}` : 'vanessa_planning_goals'
+}
+
+function getUserFixedCostsKey(): string {
+  const user = getCurrentUser()
+  return user ? `vanessa_fixed_costs_${user.id}` : 'vanessa_fixed_costs'
 }
 
 // --- Moods ---
@@ -233,4 +248,108 @@ export function getMonthlyBalance(): { income: number; expenses: number; balance
   const expenses = transactions.filter(t => t.type === 'saida').reduce((sum, t) => sum + t.value, 0)
 
   return { income, expenses, balance: income - expenses }
+}
+
+// --- Piggy Banks ---
+export function getPiggyBanks(): PiggyBank[] {
+  if (typeof window === 'undefined') return []
+  const data = localStorage.getItem(getUserPiggyBanksKey())
+  return data ? JSON.parse(data) : []
+}
+
+export function addPiggyBank(data: Omit<PiggyBank, 'id' | 'createdAt'>): PiggyBank {
+  const piggyBanks = getPiggyBanks()
+  const newPiggyBank: PiggyBank = {
+    ...data,
+    id: generateId(),
+    createdAt: new Date().toISOString(),
+  }
+  piggyBanks.push(newPiggyBank)
+  localStorage.setItem(getUserPiggyBanksKey(), JSON.stringify(piggyBanks))
+  return newPiggyBank
+}
+
+export function updatePiggyBank(id: string, updates: Partial<PiggyBank>): PiggyBank | null {
+  const piggyBanks = getPiggyBanks()
+  const index = piggyBanks.findIndex(item => item.id === id)
+  if (index === -1) return null
+  piggyBanks[index] = { ...piggyBanks[index], ...updates, id: piggyBanks[index].id }
+  localStorage.setItem(getUserPiggyBanksKey(), JSON.stringify(piggyBanks))
+  return piggyBanks[index]
+}
+
+export function deletePiggyBank(id: string): boolean {
+  const piggyBanks = getPiggyBanks()
+  const next = piggyBanks.filter(item => item.id !== id)
+  if (next.length === piggyBanks.length) return false
+  localStorage.setItem(getUserPiggyBanksKey(), JSON.stringify(next))
+  return true
+}
+
+// --- Planning Goals ---
+export function getPlanningGoals(): PlanningGoal[] {
+  if (typeof window === 'undefined') return []
+  const data = localStorage.getItem(getUserPlanningGoalsKey())
+  return data ? JSON.parse(data) : []
+}
+
+export function addPlanningGoal(data: Omit<PlanningGoal, 'id' | 'createdAt'>): PlanningGoal {
+  const goals = getPlanningGoals()
+  const newGoal: PlanningGoal = {
+    ...data,
+    id: generateId(),
+    createdAt: new Date().toISOString(),
+  }
+  goals.push(newGoal)
+  localStorage.setItem(getUserPlanningGoalsKey(), JSON.stringify(goals))
+  return newGoal
+}
+
+export function deletePlanningGoal(id: string): boolean {
+  const goals = getPlanningGoals()
+  const next = goals.filter(goal => goal.id !== id)
+  if (next.length === goals.length) return false
+  localStorage.setItem(getUserPlanningGoalsKey(), JSON.stringify(next))
+  return true
+}
+
+// --- Fixed Costs ---
+export function getFixedCosts(): FixedCost[] {
+  if (typeof window === 'undefined') return []
+  const data = localStorage.getItem(getUserFixedCostsKey())
+  return data ? JSON.parse(data) : []
+}
+
+export function addFixedCost(data: Omit<FixedCost, 'id' | 'createdAt'>): FixedCost {
+  const costs = getFixedCosts()
+  const newCost: FixedCost = {
+    ...data,
+    id: generateId(),
+    createdAt: new Date().toISOString(),
+  }
+  costs.push(newCost)
+  localStorage.setItem(getUserFixedCostsKey(), JSON.stringify(costs))
+  return newCost
+}
+
+export function deleteFixedCost(id: string): boolean {
+  const costs = getFixedCosts()
+  const next = costs.filter(item => item.id !== id)
+  if (next.length === costs.length) return false
+  localStorage.setItem(getUserFixedCostsKey(), JSON.stringify(next))
+  return true
+}
+
+export function getMonthlyIncomeFromTransactions(): number {
+  const now = new Date()
+  return getTransactions()
+    .filter(t => {
+      const d = new Date(t.timestamp)
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear() && t.type === 'entrada' && !t.sleeping
+    })
+    .reduce((sum, t) => sum + t.value, 0)
+}
+
+export function getMonthlyFixedCostsTotal(): number {
+  return getFixedCosts().reduce((sum, item) => sum + item.amount, 0)
 }

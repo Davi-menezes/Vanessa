@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Mic, MicOff, Check, Loader2 } from 'lucide-react'
 import type { TransactionCategory } from '@/lib/types'
@@ -10,32 +10,174 @@ interface AudioInputProps {
   onTransactionExtracted: (data: { value: number; category: TransactionCategory; description: string }) => void
 }
 
-const simulatedTranscriptions = [
-  { text: 'Gastei 50 reais com sushi agora', value: 50, category: 'alimentacao' as TransactionCategory, description: 'Sushi delivery' },
-  { text: 'Paguei 30 reais de Uber', value: 30, category: 'transporte' as TransactionCategory, description: 'Uber' },
-  { text: 'Comprei um livro por 45 reais', value: 45, category: 'educacao' as TransactionCategory, description: 'Livro' },
-  { text: 'Gastei 120 com cinema e pipoca', value: 120, category: 'lazer' as TransactionCategory, description: 'Cinema e pipoca' },
-]
+type AudioState = 'idle' | 'recording' | 'processing' | 'result' | 'error'
+
+interface SpeechRecognitionResult {
+  readonly isFinal: boolean
+  readonly length: number
+  item(index: number): SpeechRecognitionAlternative
+  [index: number]: SpeechRecognitionAlternative
+}
+
+interface SpeechRecognitionAlternative {
+  readonly transcript: string
+}
+
+interface SpeechRecognitionResultList {
+  readonly length: number
+  item(index: number): SpeechRecognitionResult
+  [index: number]: SpeechRecognitionResult
+}
+
+interface SpeechRecognitionEvent extends Event {
+  readonly resultIndex: number
+  readonly results: SpeechRecognitionResultList
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  readonly error: string
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean
+  interimResults: boolean
+  lang: string
+  onstart: (() => void) | null
+  onresult: ((event: SpeechRecognitionEvent) => void) | null
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null
+  onend: (() => void) | null
+  start(): void
+  stop(): void
+}
+
+interface SpeechRecognitionConstructor {
+  new (): SpeechRecognition
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition?: SpeechRecognitionConstructor
+    webkitSpeechRecognition?: SpeechRecognitionConstructor
+  }
+}
+
+function parseTranscription(text: string): { value: number; category: TransactionCategory; description: string } | null {
+  const normalized = text.toLowerCase().trim()
+  const valueMatch = normalized.match(/(\d+[.,]?\d{0,2})/)
+  if (!valueMatch) return null
+
+  const value = Number(valueMatch[1].replace(',', '.'))
+  if (!Number.isFinite(value) || value <= 0) return null
+
+  const categoryMap: Array<{ keywords: string[]; category: TransactionCategory; description: string }> = [
+    { keywords: ['uber', 'onibus', 'ônibus', 'metro', 'metrô', 'taxi', 'gasolina'], category: 'transporte', description: 'Transporte' },
+    { keywords: ['mercado', 'comida', 'almoco', 'almoço', 'janta', 'sushi', 'lanche', 'restaurante'], category: 'alimentacao', description: 'Alimentacao' },
+    { keywords: ['netflix', 'cinema', 'show', 'bar', 'lazer', 'jogo'], category: 'lazer', description: 'Lazer' },
+    { keywords: ['curso', 'livro', 'faculdade', 'escola', 'educacao', 'educação'], category: 'educacao', description: 'Educacao' },
+    { keywords: ['farmacia', 'farmácia', 'medico', 'médico', 'saude', 'saúde'], category: 'saude', description: 'Saude' },
+    { keywords: ['aluguel', 'condominio', 'condomínio', 'agua', 'água', 'luz', 'internet'], category: 'moradia', description: 'Moradia' },
+  ]
+
+  const detected = categoryMap.find(item => item.keywords.some(keyword => normalized.includes(keyword)))
+  if (detected) {
+    return { value, category: detected.category, description: detected.description }
+  }
+
+  return { value, category: 'outros', description: 'Despesa por voz' }
+}
 
 export function AudioInput({ onTransactionExtracted }: AudioInputProps) {
-  const [state, setState] = useState<'idle' | 'recording' | 'processing' | 'result'>('idle')
+  const [state, setState] = useState<AudioState>('idle')
   const [transcription, setTranscription] = useState('')
   const [extractedData, setExtractedData] = useState<{ value: number; category: TransactionCategory; description: string } | null>(null)
+  const [errorMessage, setErrorMessage] = useState('')
+  const recognitionRef = useRef<SpeechRecognition | null>(null)
+  const isStoppingRef = useRef(false)
+  const transcriptionRef = useRef('')
+
+  useEffect(() => {
+    const RecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (!RecognitionCtor) return
+
+    const recognition = new RecognitionCtor()
+    recognition.lang = 'pt-BR'
+    recognition.continuous = false
+    recognition.interimResults = true
+
+    recognition.onstart = () => {
+      isStoppingRef.current = false
+      setErrorMessage('')
+      setState('recording')
+      setTranscription('')
+      transcriptionRef.current = ''
+      setExtractedData(null)
+    }
+
+    recognition.onresult = event => {
+      let fullText = ''
+      for (let i = event.resultIndex; i < event.results.length; i += 1) {
+        fullText += event.results[i][0].transcript
+      }
+      const cleaned = fullText.trim()
+      transcriptionRef.current = cleaned
+      setTranscription(cleaned)
+    }
+
+    recognition.onerror = event => {
+      if (event.error === 'aborted' && isStoppingRef.current) return
+      setState('error')
+      setErrorMessage('Nao foi possivel capturar audio. Tente novamente.')
+    }
+
+    recognition.onend = () => {
+      if (isStoppingRef.current) return
+      setState('processing')
+      const parsed = parseTranscription(transcriptionRef.current)
+      if (!parsed) {
+        setState('error')
+        setErrorMessage('Nao entendi o valor da transacao. Fale, por exemplo: "Gastei 25 reais de uber".')
+        return
+      }
+      setExtractedData(parsed)
+      setState('result')
+    }
+
+    recognitionRef.current = recognition
+
+    return () => {
+      recognition.onstart = null
+      recognition.onresult = null
+      recognition.onerror = null
+      recognition.onend = null
+      try {
+        recognition.stop()
+      } catch {
+        // noop
+      }
+    }
+  }, [])
 
   const handleRecord = () => {
     if (state === 'idle') {
-      setState('recording')
-      // Simulate recording for 2 seconds
-      setTimeout(() => {
-        setState('processing')
-        const sim = simulatedTranscriptions[Math.floor(Math.random() * simulatedTranscriptions.length)]
-        setTranscription(sim.text)
-        // Simulate AI extraction
-        setTimeout(() => {
-          setExtractedData({ value: sim.value, category: sim.category, description: sim.description })
-          setState('result')
-        }, 1500)
-      }, 2000)
+      const recognition = recognitionRef.current
+      if (!recognition) {
+        setState('error')
+        setErrorMessage('Seu navegador nao suporta cadastro por voz.')
+        return
+      }
+
+      try {
+        recognition.start()
+      } catch {
+        setState('error')
+        setErrorMessage('Nao foi possivel iniciar o microfone.')
+      }
+      return
+    }
+
+    if (state === 'recording') {
+      isStoppingRef.current = false
+      recognitionRef.current?.stop()
     }
   }
 
@@ -44,14 +186,19 @@ export function AudioInput({ onTransactionExtracted }: AudioInputProps) {
       onTransactionExtracted(extractedData)
       setState('idle')
       setTranscription('')
+      transcriptionRef.current = ''
       setExtractedData(null)
     }
   }
 
   const handleCancel = () => {
+    isStoppingRef.current = true
+    recognitionRef.current?.stop()
     setState('idle')
     setTranscription('')
+    transcriptionRef.current = ''
     setExtractedData(null)
+    setErrorMessage('')
   }
 
   return (
@@ -66,19 +213,19 @@ export function AudioInput({ onTransactionExtracted }: AudioInputProps) {
             ? 'bg-vanessa-danger'
             : 'bg-vanessa-lavender'
         }`}
-        aria-label={state === 'recording' ? 'Gravando audio' : 'Gravar audio'}
+        aria-label={state === 'recording' ? 'Parar gravacao' : 'Iniciar gravacao'}
       >
         {state === 'recording' ? (
           <motion.div
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ repeat: Infinity, duration: 1 }}
           >
-            <MicOff className="h-6 w-6 text-primary-foreground" />
+            <Mic className="h-6 w-6 text-primary-foreground" />
           </motion.div>
         ) : state === 'processing' ? (
           <Loader2 className="h-6 w-6 animate-spin text-primary-foreground" />
         ) : (
-          <Mic className="h-6 w-6 text-primary-foreground" />
+          <MicOff className="h-6 w-6 text-primary-foreground" />
         )}
       </motion.button>
 
@@ -102,7 +249,7 @@ export function AudioInput({ onTransactionExtracted }: AudioInputProps) {
 
       {/* Extraction result overlay */}
       <AnimatePresence>
-        {(state === 'processing' || state === 'result') && (
+        {(state === 'processing' || state === 'result' || state === 'error') && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -125,6 +272,22 @@ export function AudioInput({ onTransactionExtracted }: AudioInputProps) {
                       {`"${transcription}"`}
                     </p>
                   )}
+                </div>
+              )}
+
+              {state === 'error' && (
+                <div className="flex flex-col gap-5">
+                  <p className="text-center text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
+                    Erro no Audio
+                  </p>
+                  <p className="text-center text-sm text-secondary-foreground">{errorMessage}</p>
+                  <motion.button
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleCancel}
+                    className="rounded-xl bg-vanessa-lavender px-4 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-vanessa-lavender/90"
+                  >
+                    Entendi
+                  </motion.button>
                 </div>
               )}
 

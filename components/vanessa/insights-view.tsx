@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import { Download, FileText, TrendingUp, Brain } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { getMoodGastosCorrelation, getCategorySpending, getTransactions, getMoods } from '@/lib/store'
+import { getMoodGastosCorrelation, getCategorySpending, getTransactions } from '@/lib/store'
 import { MOOD_CONFIG, CATEGORY_LABELS } from '@/lib/types'
 import type { TransactionCategory, MoodType } from '@/lib/types'
 
@@ -22,7 +22,6 @@ export function InsightsView() {
   const moodGastos = getMoodGastosCorrelation()
   const categorySpending = getCategorySpending()
   const transactions = getTransactions()
-  const moods = getMoods()
 
   const totalExpenses = transactions.filter(t => t.type === 'saida' && !t.sleeping).reduce((s, t) => s + t.value, 0)
   const impulsiveExpenses = transactions
@@ -62,7 +61,6 @@ RELATORIO VANESSA
 ==================
 Periodo: ${new Date().toLocaleDateString('pt-BR')}
 Total de Transacoes: ${transactions.length}
-Total de Check-ins: ${moods.length}
 Gastos Totais: R$ ${totalExpenses.toFixed(2)}
 Gastos Impulsivos: R$ ${impulsiveExpenses.toFixed(2)} (${impulsivePercent}%)
 
