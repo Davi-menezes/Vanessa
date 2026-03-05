@@ -1,10 +1,12 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowUp, ArrowDown, Wallet, Brain, Sparkles, CloudRain, Leaf, Meh } from 'lucide-react'
 import type { MoodType } from '@/lib/types'
 import { MOOD_CONFIG } from '@/lib/types'
-import { getMonthlyBalance, getLatestMood, getTransactions } from '@/lib/store'
+import { getMonthlyBalance, getLatestMood, getMonthlyFixedCostsTotal, getTransactions } from '@/lib/store'
+import { Switch } from '@/components/ui/switch'
 
 const moodIcons: Record<MoodType, React.ReactNode> = {
   ansiedade: <Brain className="h-5 w-5" />,
@@ -20,7 +22,10 @@ interface HomeViewProps {
 }
 
 export function HomeView({ onChangeMood, userName }: HomeViewProps) {
+  const [showDiscountedBalance, setShowDiscountedBalance] = useState(true)
   const balance = getMonthlyBalance()
+  const fixedCostsTotal = getMonthlyFixedCostsTotal()
+  const displayedBalance = showDiscountedBalance ? balance.balance - fixedCostsTotal : balance.balance
   const latestMood = getLatestMood()
   const recentTxs = getTransactions()
     .filter(t => !t.sleeping)
@@ -77,9 +82,20 @@ export function HomeView({ onChangeMood, userName }: HomeViewProps) {
           <Wallet className="h-4 w-4 text-vanessa-lavender" />
           <span className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">Saldo do Mes</span>
         </div>
-        <p className={`text-3xl font-bold ${balance.balance >= 0 ? 'text-vanessa-success' : 'text-vanessa-danger'}`}>
-          R$ {balance.balance.toFixed(2)}
+        <p className={`text-3xl font-bold ${displayedBalance >= 0 ? 'text-vanessa-success' : 'text-vanessa-danger'}`}>
+          R$ {displayedBalance.toFixed(2)}
         </p>
+        <div className="flex items-center justify-between rounded-xl border border-border/40 bg-secondary/20 px-3 py-2">
+          <div>
+            <p className="text-xs font-medium text-foreground">Descontar gastos fixos</p>
+            <p className="text-[10px] text-muted-foreground">Total fixo mensal: R$ {fixedCostsTotal.toFixed(2)}</p>
+          </div>
+          <Switch
+            checked={showDiscountedBalance}
+            onCheckedChange={setShowDiscountedBalance}
+            aria-label="Alternar saldo com gastos fixos descontados"
+          />
+        </div>
         <div className="flex gap-4">
           <div className="flex items-center gap-1.5">
             <div className="flex h-6 w-6 items-center justify-center rounded-full bg-vanessa-success/15">

@@ -21,12 +21,26 @@ export function AddTransactionForm({ onAdd, onClose }: AddTransactionFormProps) 
   const [category, setCategory] = useState<TransactionCategory>('alimentacao')
   const [type, setType] = useState<TransactionType>('saida')
   const [description, setDescription] = useState('')
+  const [incomeKind, setIncomeKind] = useState<'salario' | 'outro'>('salario')
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const numValue = parseFloat(value)
-    if (isNaN(numValue) || numValue <= 0 || !description.trim()) return
-    onAdd({ value: numValue, category, type, description: description.trim() })
+    if (isNaN(numValue) || numValue <= 0) return
+
+    const finalDescription =
+      type === 'entrada' && incomeKind === 'salario'
+        ? (description.trim() || 'Salario')
+        : description.trim()
+
+    if (!finalDescription) return
+
+    const finalCategory: TransactionCategory =
+      type === 'entrada' && incomeKind === 'salario'
+        ? 'outros'
+        : category
+
+    onAdd({ value: numValue, category: finalCategory, type, description: finalDescription })
   }
 
   return (
@@ -55,7 +69,10 @@ export function AddTransactionForm({ onAdd, onClose }: AddTransactionFormProps) 
           <div className="flex gap-2 rounded-xl bg-secondary/50 p-1">
             <button
               type="button"
-              onClick={() => setType('saida')}
+              onClick={() => {
+                setType('saida')
+                setIncomeKind('salario')
+              }}
               className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${type === 'saida' ? 'bg-vanessa-danger/20 text-vanessa-danger' : 'text-muted-foreground'}`}
             >
               Saida
@@ -68,6 +85,40 @@ export function AddTransactionForm({ onAdd, onClose }: AddTransactionFormProps) 
               Entrada
             </button>
           </div>
+
+          {type === 'entrada' && (
+            <div className="flex gap-2 rounded-xl bg-secondary/40 p-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setIncomeKind('salario')
+                  setCategory('outros')
+                  if (!description.trim()) setDescription('Salario')
+                }}
+                className={`flex-1 rounded-lg py-2 text-xs font-medium transition-colors ${
+                  incomeKind === 'salario'
+                    ? 'bg-vanessa-success/20 text-vanessa-success'
+                    : 'text-muted-foreground'
+                }`}
+              >
+                Salario
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setIncomeKind('outro')
+                  if (description.trim() === 'Salario') setDescription('')
+                }}
+                className={`flex-1 rounded-lg py-2 text-xs font-medium transition-colors ${
+                  incomeKind === 'outro'
+                    ? 'bg-vanessa-lavender/20 text-vanessa-lavender'
+                    : 'text-muted-foreground'
+                }`}
+              >
+                Outra entrada
+              </button>
+            </div>
+          )}
 
           <div className="flex flex-col gap-1.5">
             <Label className="text-xs text-muted-foreground">Valor (R$)</Label>
@@ -88,7 +139,7 @@ export function AddTransactionForm({ onAdd, onClose }: AddTransactionFormProps) 
             <Input
               value={description}
               onChange={e => setDescription(e.target.value)}
-              placeholder="Ex: Supermercado, Uber..."
+              placeholder={type === 'entrada' ? 'Ex: Salario, Freela...' : 'Ex: Supermercado, Uber...'}
               className="border-border bg-secondary/50"
               required
             />
