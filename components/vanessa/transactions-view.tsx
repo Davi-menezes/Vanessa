@@ -1,23 +1,26 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import { motion } from 'framer-motion'
-import { Plus, FileText, Trash2 } from 'lucide-react'
+import { Plus, FileText, Trash2, ReceiptText } from 'lucide-react'
 import { TransactionList } from './transaction-list'
-import { getMonthlyBalance } from '@/lib/store'
+import { getHiddenExpensesTransactionIds, getMonthlyBalance, hideExpensesTransactionNotification } from '@/lib/store'
 import type { Transaction, TransactionCategory } from '@/lib/types'
+import { Input } from '@/components/ui/input'
 
 interface TransactionsViewProps {
   transactions: Transaction[]
   onAddNew: () => void
   onClearHistory: () => void
   onImportReceipt: (items: Array<{ value: number; description: string; category: TransactionCategory }>) => void
+  onDeleteTransaction: (id: string) => void
 }
 
 function inferCategory(text: string): TransactionCategory {
   const normalized = text.toLowerCase()
-  if (/(uber|taxi|onibus|ônibus|metro|metrô|gasolina)/.test(normalized)) return 'transporte'
+  if (/(gasolina|etanol|diesel|combustivel|combustível|posto)/.test(normalized)) return 'combustivel'
+  if (/(uber|taxi|onibus|ônibus|metro|metrô)/.test(normalized)) return 'transporte'
   if (/(mercado|comida|almoco|almoço|janta|lanche|restaurante|padaria)/.test(normalized)) return 'alimentacao'
   if (/(cinema|netflix|show|jogo|lazer)/.test(normalized)) return 'lazer'
   if (/(farmacia|farmácia|medico|médico|consulta|exame)/.test(normalized)) return 'saude'
@@ -61,9 +64,16 @@ function parseReceiptText(rawText: string): Array<{ value: number; description: 
   return []
 }
 
-export function TransactionsView({ transactions, onAddNew, onClearHistory, onImportReceipt }: TransactionsViewProps) {
+export function TransactionsView({ transactions, onAddNew, onClearHistory, onImportReceipt, onDeleteTransaction }: TransactionsViewProps) {
   const balance = getMonthlyBalance()
   const inputRef = useRef<HTMLInputElement | null>(null)
+  const invoiceInputRef = useRef<HTMLInputElement | null>(null)
+  const [hiddenIds, setHiddenIds] = useState<string[]>(getHiddenExpensesTransactionIds())
+  const [infoModalMessage, setInfoModalMessage] = useState<string | null>(null)
+  const [showManualInvoiceModal, setShowManualInvoiceModal] = useState(false)
+  const [manualInvoiceFileName, setManualInvoiceFileName] = useState('')
+  const [manualInvoiceValue, setManualInvoiceValue] = useState('')
+  const [manualInvoiceDescription, setManualInvoiceDescription] = useState('')
 
   const handleFileSelect = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -73,15 +83,61 @@ export function TransactionsView({ transactions, onAddNew, onClearHistory, onImp
       const content = await file.text()
       const parsedItems = parseReceiptText(content)
       if (parsedItems.length === 0) {
-        alert('Nao consegui ler os valores desse arquivo. Use txt/csv com valores no formato 12,34.')
+        setInfoModalMessage('Nao consegui ler os valores desse arquivo. Use txt/csv com valores no formato 12,34.')
       } else {
         onImportReceipt(parsedItems)
       }
     } catch {
-      alert('Falha ao importar arquivo.')
+      setInfoModalMessage('Falha ao importar arquivo.')
     } finally {
       event.target.value = ''
     }
+  }
+
+  const handleInvoiceUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    try {
+      const fileName = file.name.toLowerCase()
+      const isTextLike = /\.(txt|csv|xml|json|md|log)$/i.test(fileName)
+
+      if (isTextLike) {
+        const content = await file.text()
+        const parsedItems = parseReceiptText(content)
+        if (parsedItems.length === 0) {
+          setManualInvoiceFileName(file.name)
+          setManualInvoiceValue('')
+          setManualInvoiceDescription(`Nota fiscal: ${file.name}`)
+          setShowManualInvoiceModal(true)
+        } else {
+          onImportReceipt(parsedItems)
+          return
+        }
+      } else {
+        setManualInvoiceFileName(file.name)
+        setManualInvoiceValue('')
+        setManualInvoiceDescription(`Nota fiscal: ${file.name}`)
+        setShowManualInvoiceModal(true)
+      }
+    } finally {
+      event.target.value = ''
+    }
+  }
+
+  const handleManualInvoiceSubmit = () => {
+    const value = Number(manualInvoiceValue.replace(',', '.'))
+    if (!Number.isFinite(value) || value <= 0) {
+      setInfoModalMessage('Valor invalido. Informe um numero maior que zero.')
+      return
+    }
+
+    const description = manualInvoiceDescription.trim() || `Nota fiscal: ${manualInvoiceFileName}`
+    onImportReceipt([{ value, description, category: inferCategory(description) }])
+    setShowManualInvoiceModal(false)
+    setManualInvoiceValue('')
+    setManualInvoiceDescription('')
+    setManualInvoiceFileName('')
   }
 
   return (
@@ -97,6 +153,13 @@ export function TransactionsView({ transactions, onAddNew, onClearHistory, onImp
         </div>
         <div className="flex items-center gap-2">
           <input
+            ref={invoiceInputRef}
+            type="file"
+            accept=".txt,.csv,.xml,.json,.md,.log,.pdf,.png,.jpg,.jpeg,.webp"
+            className="hidden"
+            onChange={handleInvoiceUpload}
+          />
+          <input
             ref={inputRef}
             type="file"
             accept=".txt,.csv,.md,.log"
@@ -111,6 +174,15 @@ export function TransactionsView({ transactions, onAddNew, onClearHistory, onImp
             title="Importar comprovante"
           >
             <FileText className="h-5 w-5" />
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => invoiceInputRef.current?.click()}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-secondary/30 text-secondary-foreground"
+            aria-label="Upload de nota fiscal"
+            title="Upload de nota fiscal"
+          >
+            <ReceiptText className="h-5 w-5" />
           </motion.button>
           <motion.button
             whileTap={{ scale: 0.9 }}
@@ -144,7 +216,72 @@ export function TransactionsView({ transactions, onAddNew, onClearHistory, onImp
         </div>
       </div>
 
-      <TransactionList transactions={transactions} />
+      <TransactionList
+        transactions={transactions}
+        hiddenIds={hiddenIds}
+        onHideNotification={(id) => {
+          hideExpensesTransactionNotification(id)
+          setHiddenIds(prev => Array.from(new Set([...prev, id])))
+        }}
+        onDeleteTransaction={onDeleteTransaction}
+      />
+
+      {infoModalMessage && (
+        <div className="fixed inset-0 z-50 flex items-end bg-background/70 backdrop-blur-sm">
+          <div className="w-full rounded-t-3xl border-t border-border bg-card p-5 pb-8">
+            <p className="text-sm font-medium text-foreground">Aviso</p>
+            <p className="mt-2 text-sm text-muted-foreground">{infoModalMessage}</p>
+            <button
+              onClick={() => setInfoModalMessage(null)}
+              className="mt-4 w-full rounded-xl bg-vanessa-lavender px-4 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-vanessa-lavender/90"
+            >
+              Entendi
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showManualInvoiceModal && (
+        <div className="fixed inset-0 z-50 flex items-end bg-background/70 backdrop-blur-sm">
+          <div className="w-full rounded-t-3xl border-t border-border bg-card p-5 pb-8">
+            <p className="text-sm font-medium text-foreground">Cadastrar nota fiscal manualmente</p>
+            <p className="mt-1 text-xs text-muted-foreground">{manualInvoiceFileName}</p>
+            <div className="mt-4 flex flex-col gap-3">
+              <div>
+                <p className="mb-1 text-xs text-muted-foreground">Valor total</p>
+                <Input
+                  value={manualInvoiceValue}
+                  onChange={e => setManualInvoiceValue(e.target.value)}
+                  placeholder="Ex: 129,90"
+                  inputMode="decimal"
+                  className="border-border bg-secondary/40"
+                />
+              </div>
+              <div>
+                <p className="mb-1 text-xs text-muted-foreground">Descricao (opcional)</p>
+                <Input
+                  value={manualInvoiceDescription}
+                  onChange={e => setManualInvoiceDescription(e.target.value)}
+                  placeholder="Ex: Compra no mercado"
+                  className="border-border bg-secondary/40"
+                />
+              </div>
+              <button
+                onClick={handleManualInvoiceSubmit}
+                className="rounded-xl bg-vanessa-lavender px-4 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-vanessa-lavender/90"
+              >
+                Cadastrar gasto
+              </button>
+              <button
+                onClick={() => setShowManualInvoiceModal(false)}
+                className="rounded-xl px-4 py-3 text-sm text-muted-foreground transition-colors hover:bg-secondary"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </motion.div>
   )
 }

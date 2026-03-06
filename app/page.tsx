@@ -17,6 +17,7 @@ import {
   getLatestMood,
   addTransaction,
   clearTransactions,
+  deleteTransaction,
   getTransactions,
   getCurrentUser,
   logout,
@@ -198,6 +199,10 @@ export default function VanessaApp() {
                       sleepUntil: null,
                     })
                   }
+                  refresh()
+                }}
+                onDeleteTransaction={(id) => {
+                  deleteTransaction(id)
                   refresh()
                 }}
               />

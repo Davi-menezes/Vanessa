@@ -11,6 +11,7 @@ export type MoodType = 'ansiedade' | 'tedio' | 'euforia' | 'tristeza' | 'calmari
 export type TransactionCategory =
   | 'alimentacao'
   | 'transporte'
+  | 'combustivel'
   | 'lazer'
   | 'saude'
   | 'educacao'
@@ -68,7 +69,7 @@ export interface FixedCost {
   name: string
   amount: number
   dueDay: number
-  category: 'moradia' | 'educacao' | 'transporte' | 'saude' | 'assinaturas' | 'outros'
+  category: 'moradia' | 'educacao' | 'transporte' | 'combustivel' | 'saude' | 'assinaturas' | 'outros'
   createdAt: string
 }
 
@@ -83,6 +84,7 @@ export const MOOD_CONFIG: Record<MoodType, { label: string; icon: string; color:
 export const CATEGORY_LABELS: Record<TransactionCategory, string> = {
   alimentacao: 'Alimentacao',
   transporte: 'Transporte',
+  combustivel: 'Combustivel',
   lazer: 'Lazer',
   saude: 'Saude',
   educacao: 'Educacao',

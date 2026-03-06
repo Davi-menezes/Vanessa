@@ -5,7 +5,13 @@ import { motion } from 'framer-motion'
 import { ArrowUp, ArrowDown, Wallet, Brain, Sparkles, CloudRain, Leaf, Meh, Trash2 } from 'lucide-react'
 import type { MoodType, Transaction } from '@/lib/types'
 import { MOOD_CONFIG } from '@/lib/types'
-import { getMonthlyBalance, getLatestMood, getMonthlyFixedCostsTotal } from '@/lib/store'
+import {
+  getMonthlyBalance,
+  getLatestMood,
+  getMonthlyFixedCostsTotal,
+  getHiddenHomeTransactionIds,
+  hideHomeTransactionNotification,
+} from '@/lib/store'
 import { Switch } from '@/components/ui/switch'
 
 const moodIcons: Record<MoodType, React.ReactNode> = {
@@ -25,6 +31,7 @@ interface HomeViewProps {
 
 export function HomeView({ onChangeMood, transactions, onClearHistory, userName }: HomeViewProps) {
   const [showDiscountedBalance, setShowDiscountedBalance] = useState(true)
+  const [hiddenNotificationIds, setHiddenNotificationIds] = useState<string[]>(getHiddenHomeTransactionIds())
   const balance = getMonthlyBalance()
   const fixedCostsTotal = getMonthlyFixedCostsTotal()
   const displayedBalance = showDiscountedBalance ? balance.balance - fixedCostsTotal : balance.balance
@@ -32,10 +39,10 @@ export function HomeView({ onChangeMood, transactions, onClearHistory, userName 
   const recentTxs = useMemo(
     () =>
       [...transactions]
-        .filter(t => !t.sleeping)
+        .filter(t => !t.sleeping && !hiddenNotificationIds.includes(t.id))
         .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
         .slice(0, 4),
-    [transactions]
+    [transactions, hiddenNotificationIds]
   )
 
   const hour = new Date().getHours()
@@ -108,7 +115,7 @@ export function HomeView({ onChangeMood, transactions, onClearHistory, userName 
               <ArrowUp className="h-3 w-3 text-vanessa-success" />
             </div>
             <div>
-              <p className="text-[10px] text-muted-foreground">Entradas</p>
+              <p className="text-[10px] text-muted-foreground">Receitas</p>
               <p className="text-xs font-semibold text-vanessa-success">R$ {balance.income.toFixed(2)}</p>
             </div>
           </div>
@@ -142,8 +149,19 @@ export function HomeView({ onChangeMood, transactions, onClearHistory, userName 
           recentTxs.map(tx => (
             <div
               key={tx.id}
-              className="flex items-center gap-3 rounded-xl border border-border/30 bg-secondary/20 px-3.5 py-2.5"
+              className="relative flex items-center gap-3 rounded-xl border border-border/30 bg-secondary/20 px-3.5 py-2.5"
             >
+              <button
+                onClick={() => {
+                  hideHomeTransactionNotification(tx.id)
+                  setHiddenNotificationIds(prev => Array.from(new Set([...prev, tx.id])))
+                }}
+                className="absolute right-2 top-2 rounded-md p-1 text-vanessa-danger transition-colors hover:bg-vanessa-danger/10"
+                aria-label="Remover notificacao"
+                title="Remover notificacao"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
               <div className={`flex h-8 w-8 items-center justify-center rounded-full ${tx.type === 'entrada' ? 'bg-vanessa-success/15' : 'bg-vanessa-danger/15'}`}>
                 {tx.type === 'entrada' ? (
                   <ArrowUp className="h-3.5 w-3.5 text-vanessa-success" />
@@ -157,7 +175,7 @@ export function HomeView({ onChangeMood, transactions, onClearHistory, userName 
                   {new Date(tx.timestamp).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
                 </p>
               </div>
-              <span className={`text-sm font-semibold ${tx.type === 'entrada' ? 'text-vanessa-success' : 'text-foreground'}`}>
+              <span className={`pr-6 text-sm font-semibold ${tx.type === 'entrada' ? 'text-vanessa-success' : 'text-foreground'}`}>
                 {tx.type === 'entrada' ? '+' : '-'}R$ {tx.value.toFixed(2)}
               </span>
             </div>

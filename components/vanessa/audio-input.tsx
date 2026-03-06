@@ -70,7 +70,8 @@ function parseTranscription(text: string): { value: number; category: Transactio
   if (!Number.isFinite(value) || value <= 0) return null
 
   const categoryMap: Array<{ keywords: string[]; category: TransactionCategory; description: string }> = [
-    { keywords: ['uber', 'onibus', 'ônibus', 'metro', 'metrô', 'taxi', 'gasolina'], category: 'transporte', description: 'Transporte' },
+    { keywords: ['gasolina', 'etanol', 'diesel', 'combustivel', 'combustível', 'posto'], category: 'combustivel', description: 'Combustivel' },
+    { keywords: ['uber', 'onibus', 'ônibus', 'metro', 'metrô', 'taxi'], category: 'transporte', description: 'Transporte' },
     { keywords: ['mercado', 'comida', 'almoco', 'almoço', 'janta', 'sushi', 'lanche', 'restaurante'], category: 'alimentacao', description: 'Alimentacao' },
     { keywords: ['netflix', 'cinema', 'show', 'bar', 'lazer', 'jogo'], category: 'lazer', description: 'Lazer' },
     { keywords: ['curso', 'livro', 'faculdade', 'escola', 'educacao', 'educação'], category: 'educacao', description: 'Educacao' },

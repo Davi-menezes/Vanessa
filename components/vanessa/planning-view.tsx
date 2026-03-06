@@ -26,6 +26,7 @@ const FIXED_COST_LABELS: Record<FixedCost['category'], string> = {
   moradia: 'Moradia',
   educacao: 'Educacao',
   transporte: 'Transporte',
+  combustivel: 'Combustivel',
   saude: 'Saude',
   assinaturas: 'Assinaturas',
   outros: 'Outros',
@@ -137,7 +138,7 @@ export function PlanningView() {
         <p className="text-xs text-muted-foreground">Resumo mensal</p>
         <div className="mt-2 grid grid-cols-2 gap-3 text-sm">
           <div>
-            <p className="text-muted-foreground">Entradas</p>
+            <p className="text-muted-foreground">Receitas</p>
             <p className="font-semibold text-vanessa-success">R$ {income.toFixed(2)}</p>
           </div>
           <div>

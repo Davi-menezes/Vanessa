@@ -84,6 +84,16 @@ function getUserTransactionsKey(): string {
   return user ? `vanessa_transactions_${user.id}` : 'vanessa_transactions'
 }
 
+function getUserHomeHiddenNotificationsKey(): string {
+  const user = getCurrentUser()
+  return user ? `vanessa_home_hidden_notifications_${user.id}` : 'vanessa_home_hidden_notifications'
+}
+
+function getUserExpensesHiddenNotificationsKey(): string {
+  const user = getCurrentUser()
+  return user ? `vanessa_expenses_hidden_notifications_${user.id}` : 'vanessa_expenses_hidden_notifications'
+}
+
 function getUserPiggyBanksKey(): string {
   const user = getCurrentUser()
   return user ? `vanessa_piggy_banks_${user.id}` : 'vanessa_piggy_banks'
@@ -162,11 +172,41 @@ export function deleteTransaction(id: string): boolean {
   const filtered = transactions.filter(t => t.id !== id)
   if (filtered.length === transactions.length) return false
   localStorage.setItem(getUserTransactionsKey(), JSON.stringify(filtered))
+  const homeHidden = getHiddenHomeTransactionIds().filter(itemId => itemId !== id)
+  const expensesHidden = getHiddenExpensesTransactionIds().filter(itemId => itemId !== id)
+  localStorage.setItem(getUserHomeHiddenNotificationsKey(), JSON.stringify(homeHidden))
+  localStorage.setItem(getUserExpensesHiddenNotificationsKey(), JSON.stringify(expensesHidden))
   return true
 }
 
 export function clearTransactions(): void {
   localStorage.setItem(getUserTransactionsKey(), JSON.stringify([]))
+  localStorage.setItem(getUserHomeHiddenNotificationsKey(), JSON.stringify([]))
+  localStorage.setItem(getUserExpensesHiddenNotificationsKey(), JSON.stringify([]))
+}
+
+export function getHiddenHomeTransactionIds(): string[] {
+  if (typeof window === 'undefined') return []
+  const data = localStorage.getItem(getUserHomeHiddenNotificationsKey())
+  return data ? JSON.parse(data) : []
+}
+
+export function hideHomeTransactionNotification(id: string): void {
+  const ids = new Set(getHiddenHomeTransactionIds())
+  ids.add(id)
+  localStorage.setItem(getUserHomeHiddenNotificationsKey(), JSON.stringify(Array.from(ids)))
+}
+
+export function getHiddenExpensesTransactionIds(): string[] {
+  if (typeof window === 'undefined') return []
+  const data = localStorage.getItem(getUserExpensesHiddenNotificationsKey())
+  return data ? JSON.parse(data) : []
+}
+
+export function hideExpensesTransactionNotification(id: string): void {
+  const ids = new Set(getHiddenExpensesTransactionIds())
+  ids.add(id)
+  localStorage.setItem(getUserExpensesHiddenNotificationsKey(), JSON.stringify(Array.from(ids)))
 }
 
 export function getAwakeSleepingTransactions(): Transaction[] {
