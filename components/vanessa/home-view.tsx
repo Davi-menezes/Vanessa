@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowUp, ArrowDown, Wallet, Brain, Sparkles, CloudRain, Leaf, Meh, Trash2 } from 'lucide-react'
+import { ArrowUp, ArrowDown, Wallet, Brain, Sparkles, CloudRain, Leaf, Meh, Trash2, LogOut } from 'lucide-react'
 import type { MoodType, Transaction } from '@/lib/types'
 import { MOOD_CONFIG } from '@/lib/types'
 import {
@@ -24,12 +24,13 @@ const moodIcons: Record<MoodType, React.ReactNode> = {
 
 interface HomeViewProps {
   onChangeMood: () => void
+  onLogout: () => void
   transactions: Transaction[]
   onClearHistory: () => void
   userName?: string
 }
 
-export function HomeView({ onChangeMood, transactions, onClearHistory, userName }: HomeViewProps) {
+export function HomeView({ onChangeMood, onLogout, transactions, onClearHistory, userName }: HomeViewProps) {
   const [showDiscountedBalance, setShowDiscountedBalance] = useState(true)
   const [hiddenNotificationIds, setHiddenNotificationIds] = useState<string[]>(getHiddenHomeTransactionIds())
   const balance = getMonthlyBalance()
@@ -55,9 +56,19 @@ export function HomeView({ onChangeMood, transactions, onClearHistory, userName 
       className="flex flex-col gap-5 px-5 pb-28 pt-6"
     >
       {/* Header */}
-      <div>
-        <p className="text-sm text-muted-foreground">{greeting}{userName ? `, ${userName.split(' ')[0]}` : ''}</p>
-        <h1 className="text-2xl font-semibold text-foreground">Vanessa</h1>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm text-muted-foreground">{greeting}{userName ? `, ${userName.split(' ')[0]}` : ''}</p>
+          <h1 className="text-2xl font-semibold text-foreground">Vanessa</h1>
+        </div>
+        <button
+          onClick={onLogout}
+          className="rounded-xl border border-border/50 bg-secondary/30 p-2.5 text-muted-foreground transition-colors hover:bg-secondary/50 hover:text-foreground"
+          aria-label="Sair da conta"
+          title="Sair"
+        >
+          <LogOut className="h-4 w-4" />
+        </button>
       </div>
 
       {/* Current mood */}

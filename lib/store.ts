@@ -109,6 +109,11 @@ function getUserFixedCostsKey(): string {
   return user ? `vanessa_fixed_costs_${user.id}` : 'vanessa_fixed_costs'
 }
 
+function getUserFixedCostsAppliedKey(): string {
+  const user = getCurrentUser()
+  return user ? `vanessa_fixed_costs_applied_${user.id}` : 'vanessa_fixed_costs_applied'
+}
+
 // --- Moods ---
 export function getMoods(): MoodEntry[] {
   if (typeof window === 'undefined') return []
@@ -396,4 +401,61 @@ export function getMonthlyIncomeFromTransactions(): number {
 
 export function getMonthlyFixedCostsTotal(): number {
   return getFixedCosts().reduce((sum, item) => sum + item.amount, 0)
+}
+
+function getFixedCostsAppliedMap(): Record<string, string> {
+  if (typeof window === 'undefined') return {}
+  const raw = localStorage.getItem(getUserFixedCostsAppliedKey())
+  return raw ? JSON.parse(raw) : {}
+}
+
+function saveFixedCostsAppliedMap(data: Record<string, string>): void {
+  localStorage.setItem(getUserFixedCostsAppliedKey(), JSON.stringify(data))
+}
+
+function toMonthKey(date: Date): string {
+  const month = `${date.getMonth() + 1}`.padStart(2, '0')
+  return `${date.getFullYear()}-${month}`
+}
+
+function normalizeFixedCategory(category: FixedCost['category']): TransactionCategory {
+  if (category === 'assinaturas') return 'outros'
+  return category as TransactionCategory
+}
+
+export function applyDueFixedCosts(referenceDate: Date = new Date()): number {
+  const fixedCosts = getFixedCosts()
+  if (fixedCosts.length === 0) return 0
+
+  const appliedMap = getFixedCostsAppliedMap()
+  const monthKey = toMonthKey(referenceDate)
+  const today = referenceDate.getDate()
+  let created = 0
+
+  for (const cost of fixedCosts) {
+    const alreadyApplied = appliedMap[cost.id] === monthKey
+    const dueReached = today >= cost.dueDay
+
+    if (!alreadyApplied && dueReached) {
+      addTransaction({
+        value: cost.amount,
+        category: normalizeFixedCategory(cost.category),
+        type: 'saida',
+        description: `Gasto fixo: ${cost.name}`,
+        moodId: null,
+        mood: null,
+        timestamp: new Date().toISOString(),
+        sleeping: false,
+        sleepUntil: null,
+      })
+      appliedMap[cost.id] = monthKey
+      created += 1
+    }
+  }
+
+  if (created > 0) {
+    saveFixedCostsAppliedMap(appliedMap)
+  }
+
+  return created
 }

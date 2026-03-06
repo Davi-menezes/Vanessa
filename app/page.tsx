@@ -16,6 +16,7 @@ import {
   addMood,
   getLatestMood,
   addTransaction,
+  applyDueFixedCosts,
   clearTransactions,
   deleteTransaction,
   getTransactions,
@@ -50,6 +51,7 @@ export default function VanessaApp() {
   // Load user data after auth
   useEffect(() => {
     if (!user) return
+    applyDueFixedCosts()
     const latestMood = getLatestMood()
     if (!latestMood) {
       setShowMoodCheckin(true)
@@ -60,6 +62,7 @@ export default function VanessaApp() {
   }, [user])
 
   const refresh = useCallback(() => {
+    applyDueFixedCosts()
     setTransactions(getTransactions())
     setRefreshKey(k => k + 1)
   }, [])
@@ -163,6 +166,7 @@ export default function VanessaApp() {
               <HomeView
                 key="home"
                 onChangeMood={() => setShowMoodCheckin(true)}
+                onLogout={handleLogout}
                 transactions={transactions}
                 onClearHistory={() => {
                   if (confirm('Tem certeza que deseja limpar todo o historico de transacoes?')) {
