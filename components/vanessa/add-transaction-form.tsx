@@ -6,11 +6,11 @@ import { Plus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import type { TransactionCategory, TransactionType } from '@/lib/types'
+import type { PaymentMethod, TransactionCategory, TransactionType } from '@/lib/types'
 import { CATEGORY_LABELS } from '@/lib/types'
 
 interface AddTransactionFormProps {
-  onAdd: (data: { value: number; category: TransactionCategory; type: TransactionType; description: string }) => void
+  onAdd: (data: { value: number; category: TransactionCategory; type: TransactionType; paymentMethod: PaymentMethod; description: string }) => void
   onClose: () => void
 }
 
@@ -20,6 +20,7 @@ export function AddTransactionForm({ onAdd, onClose }: AddTransactionFormProps) 
   const [value, setValue] = useState('')
   const [category, setCategory] = useState<TransactionCategory>('alimentacao')
   const [type, setType] = useState<TransactionType>('saida')
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('conta_corrente')
   const [description, setDescription] = useState('')
   const [incomeKind, setIncomeKind] = useState<'salario' | 'outro'>('salario')
 
@@ -43,7 +44,8 @@ export function AddTransactionForm({ onAdd, onClose }: AddTransactionFormProps) 
         ? 'outros'
         : category
 
-    onAdd({ value: numValue, category: finalCategory, type, description: finalDescription })
+    const finalPaymentMethod: PaymentMethod = type === 'entrada' ? 'conta_corrente' : paymentMethod
+    onAdd({ value: numValue, category: finalCategory, type, paymentMethod: finalPaymentMethod, description: finalDescription })
   }
 
   return (
@@ -119,6 +121,33 @@ export function AddTransactionForm({ onAdd, onClose }: AddTransactionFormProps) 
                 }`}
               >
                 Outra entrada
+              </button>
+            </div>
+          )}
+
+          {type === 'saida' && (
+            <div className="flex gap-2 rounded-xl bg-secondary/40 p-1">
+              <button
+                type="button"
+                onClick={() => setPaymentMethod('conta_corrente')}
+                className={`flex-1 rounded-lg py-2 text-xs font-medium transition-colors ${
+                  paymentMethod === 'conta_corrente'
+                    ? 'bg-vanessa-success/20 text-vanessa-success'
+                    : 'text-muted-foreground'
+                }`}
+              >
+                Conta corrente
+              </button>
+              <button
+                type="button"
+                onClick={() => setPaymentMethod('credito')}
+                className={`flex-1 rounded-lg py-2 text-xs font-medium transition-colors ${
+                  paymentMethod === 'credito'
+                    ? 'bg-vanessa-warning/20 text-vanessa-warning'
+                    : 'text-muted-foreground'
+                }`}
+              >
+                Credito
               </button>
             </div>
           )}

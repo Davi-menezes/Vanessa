@@ -59,9 +59,9 @@ export function InsightsView() {
   ].filter(item => item.total > 0)
 
   const handleExportCSV = () => {
-    const headers = 'Data,Descricao,Categoria,Tipo,Valor,Humor\n'
+    const headers = 'Data,Descricao,Categoria,Tipo,Metodo,Valor,Humor\n'
     const rows = transactions.map(t =>
-      `${new Date(t.timestamp).toLocaleDateString('pt-BR')},${t.description},${CATEGORY_LABELS[t.category]},${t.type === 'entrada' ? 'Receita' : 'Saida'},${t.value.toFixed(2)},${t.mood || 'N/A'}`
+      `${new Date(t.timestamp).toLocaleDateString('pt-BR')},${t.description},${CATEGORY_LABELS[t.category]},${t.type === 'entrada' ? 'Receita' : 'Saida'},${t.paymentMethod === 'credito' ? 'Credito' : 'Conta corrente'},${t.value.toFixed(2)},${t.mood || 'N/A'}`
     ).join('\n')
     const blob = new Blob([headers + rows], { type: 'text/csv' })
     const url = URL.createObjectURL(blob)
@@ -100,7 +100,7 @@ export function InsightsView() {
     for (let i = 0; i < maxRows; i += 1) {
       const tx = transactions[i]
       const sign = tx.type === 'entrada' ? '+' : '-'
-      const line = `${new Date(tx.timestamp).toLocaleDateString('pt-BR')} | ${tx.description.slice(0, 28)} | ${sign}R$ ${tx.value.toFixed(2)} | ${CATEGORY_LABELS[tx.category]}`
+      const line = `${new Date(tx.timestamp).toLocaleDateString('pt-BR')} | ${tx.description.slice(0, 22)} | ${tx.paymentMethod === 'credito' ? 'Credito' : 'Conta'} | ${sign}R$ ${tx.value.toFixed(2)}`
       doc.text(line, 14, y)
       y += 6
       if (y > 280) break

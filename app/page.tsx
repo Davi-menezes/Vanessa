@@ -16,7 +16,6 @@ import {
   addMood,
   getLatestMood,
   addTransaction,
-  applyDueFixedCosts,
   clearTransactions,
   deleteTransaction,
   getTransactions,
@@ -24,7 +23,7 @@ import {
   logout,
 } from '@/lib/store'
 import { MOOD_CONFIG } from '@/lib/types'
-import type { MoodType, TransactionCategory, TransactionType, User } from '@/lib/types'
+import type { MoodType, PaymentMethod, TransactionCategory, TransactionType, User } from '@/lib/types'
 
 type Tab = 'home' | 'transacoes' | 'insights' | 'planejamento'
 
@@ -51,7 +50,6 @@ export default function VanessaApp() {
   // Load user data after auth
   useEffect(() => {
     if (!user) return
-    applyDueFixedCosts()
     const latestMood = getLatestMood()
     if (!latestMood) {
       setShowMoodCheckin(true)
@@ -62,7 +60,6 @@ export default function VanessaApp() {
   }, [user])
 
   const refresh = useCallback(() => {
-    applyDueFixedCosts()
     setTransactions(getTransactions())
     setRefreshKey(k => k + 1)
   }, [])
@@ -95,6 +92,7 @@ export default function VanessaApp() {
     value: number
     category: TransactionCategory
     type: TransactionType
+    paymentMethod: PaymentMethod
     description: string
   }) => {
     const latestMood = getLatestMood()
@@ -116,6 +114,7 @@ export default function VanessaApp() {
       value: data.value,
       category: data.category,
       type: 'saida',
+      paymentMethod: 'conta_corrente',
       description: data.description,
       moodId: latestMood?.id || null,
       mood: latestMood?.mood || null,
@@ -195,6 +194,7 @@ export default function VanessaApp() {
                       value: item.value,
                       category: item.category,
                       type: 'saida',
+                      paymentMethod: 'conta_corrente',
                       description: item.description,
                       moodId: latestMood?.id || null,
                       mood: latestMood?.mood || null,

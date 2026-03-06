@@ -20,6 +20,7 @@ export type TransactionCategory =
   | 'outros'
 
 export type TransactionType = 'entrada' | 'saida'
+export type PaymentMethod = 'conta_corrente' | 'credito'
 
 export interface MoodEntry {
   id: string
@@ -32,6 +33,7 @@ export interface Transaction {
   value: number
   category: TransactionCategory
   type: TransactionType
+  paymentMethod: PaymentMethod
   description: string
   moodId: string | null
   mood: MoodType | null

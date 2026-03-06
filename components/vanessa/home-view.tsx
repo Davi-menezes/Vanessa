@@ -1,15 +1,15 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowUp, ArrowDown, Wallet, Brain, Sparkles, CloudRain, Leaf, Meh, Trash2, LogOut } from 'lucide-react'
 import type { MoodType, Transaction } from '@/lib/types'
 import { MOOD_CONFIG } from '@/lib/types'
 import {
-  getMonthlyBalance,
+  getFixedCostReminders,
   getLatestMood,
-  getMonthlyFixedCostsTotal,
   getHiddenHomeTransactionIds,
+  getPiggyBanksSavedTotal,
   hideHomeTransactionNotification,
 } from '@/lib/store'
 import { Switch } from '@/components/ui/switch'
@@ -31,20 +31,53 @@ interface HomeViewProps {
 }
 
 export function HomeView({ onChangeMood, onLogout, transactions, onClearHistory, userName }: HomeViewProps) {
-  const [showDiscountedBalance, setShowDiscountedBalance] = useState(true)
+  const [selectedWallet, setSelectedWallet] = useState<'conta_corrente' | 'credito'>('conta_corrente')
+  const [showCofrinhoDiscount, setShowCofrinhoDiscount] = useState(false)
   const [hiddenNotificationIds, setHiddenNotificationIds] = useState<string[]>(getHiddenHomeTransactionIds())
-  const balance = getMonthlyBalance()
-  const fixedCostsTotal = getMonthlyFixedCostsTotal()
-  const displayedBalance = showDiscountedBalance ? balance.balance - fixedCostsTotal : balance.balance
+  const [showDueModal, setShowDueModal] = useState(false)
   const latestMood = getLatestMood()
+  const piggySavedTotal = getPiggyBanksSavedTotal()
+  const fixedCostReminders = getFixedCostReminders()
+
+  const now = new Date()
+  const monthTransactions = useMemo(
+    () =>
+      transactions.filter(tx => {
+        const txDate = new Date(tx.timestamp)
+        return txDate.getMonth() === now.getMonth() && txDate.getFullYear() === now.getFullYear() && !tx.sleeping
+      }),
+    [transactions, now]
+  )
+
+  const walletTransactions = useMemo(
+    () =>
+      monthTransactions.filter(tx =>
+        selectedWallet === 'conta_corrente'
+          ? tx.paymentMethod === 'conta_corrente' || tx.type === 'entrada'
+          : tx.paymentMethod === 'credito' && tx.type === 'saida'
+      ),
+    [monthTransactions, selectedWallet]
+  )
+
+  const income = walletTransactions.filter(t => t.type === 'entrada').reduce((sum, t) => sum + t.value, 0)
+  const expenses = walletTransactions.filter(t => t.type === 'saida').reduce((sum, t) => sum + t.value, 0)
+  const rawBalance = selectedWallet === 'conta_corrente' ? income - expenses : -expenses
+  const displayedBalance = showCofrinhoDiscount ? rawBalance - piggySavedTotal : rawBalance
+
   const recentTxs = useMemo(
     () =>
-      [...transactions]
+      [...walletTransactions]
         .filter(t => !t.sleeping && !hiddenNotificationIds.includes(t.id))
         .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
         .slice(0, 4),
-    [transactions, hiddenNotificationIds]
+    [walletTransactions, hiddenNotificationIds]
   )
+
+  useEffect(() => {
+    if (fixedCostReminders.dueToday.length > 0) {
+      setShowDueModal(true)
+    }
+  }, [fixedCostReminders.dueToday.length])
 
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite'
@@ -104,22 +137,51 @@ export function HomeView({ onChangeMood, onLogout, transactions, onClearHistory,
       >
         <div className="flex items-center gap-2">
           <Wallet className="h-4 w-4 text-vanessa-lavender" />
-          <span className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">Saldo do Mes</span>
+          <span className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+            {selectedWallet === 'conta_corrente' ? 'Saldo da Conta' : 'Fatura no Credito'}
+          </span>
+        </div>
+        <div className="flex gap-2 rounded-xl bg-secondary/40 p-1">
+          <button
+            onClick={() => setSelectedWallet('conta_corrente')}
+            className={`flex-1 rounded-lg py-2 text-xs font-medium ${
+              selectedWallet === 'conta_corrente'
+                ? 'bg-vanessa-success/20 text-vanessa-success'
+                : 'text-muted-foreground'
+            }`}
+          >
+            Conta corrente
+          </button>
+          <button
+            onClick={() => setSelectedWallet('credito')}
+            className={`flex-1 rounded-lg py-2 text-xs font-medium ${
+              selectedWallet === 'credito'
+                ? 'bg-vanessa-warning/20 text-vanessa-warning'
+                : 'text-muted-foreground'
+            }`}
+          >
+            Credito
+          </button>
         </div>
         <p className={`text-3xl font-bold ${displayedBalance >= 0 ? 'text-vanessa-success' : 'text-vanessa-danger'}`}>
           R$ {displayedBalance.toFixed(2)}
         </p>
         <div className="flex items-center justify-between rounded-xl border border-border/40 bg-secondary/20 px-3 py-2">
           <div>
-            <p className="text-xs font-medium text-foreground">Descontar gastos fixos</p>
-            <p className="text-[10px] text-muted-foreground">Total fixo mensal: R$ {fixedCostsTotal.toFixed(2)}</p>
+            <p className="text-xs font-medium text-foreground">Considerar valor guardado no cofrinho</p>
+            <p className="text-[10px] text-muted-foreground">Total guardado: R$ {piggySavedTotal.toFixed(2)}</p>
           </div>
           <Switch
-            checked={showDiscountedBalance}
-            onCheckedChange={setShowDiscountedBalance}
-            aria-label="Alternar saldo com gastos fixos descontados"
+            checked={showCofrinhoDiscount}
+            onCheckedChange={setShowCofrinhoDiscount}
+            aria-label="Alternar saldo considerando valor guardado no cofrinho"
           />
         </div>
+        {selectedWallet === 'credito' && (
+          <p className="text-[10px] text-muted-foreground">
+            Gastos no credito entram como previsao e serao pagos no proximo mes.
+          </p>
+        )}
         <div className="flex gap-4">
           <div className="flex items-center gap-1.5">
             <div className="flex h-6 w-6 items-center justify-center rounded-full bg-vanessa-success/15">
@@ -127,7 +189,7 @@ export function HomeView({ onChangeMood, onLogout, transactions, onClearHistory,
             </div>
             <div>
               <p className="text-[10px] text-muted-foreground">Receitas</p>
-              <p className="text-xs font-semibold text-vanessa-success">R$ {balance.income.toFixed(2)}</p>
+              <p className="text-xs font-semibold text-vanessa-success">R$ {income.toFixed(2)}</p>
             </div>
           </div>
           <div className="flex items-center gap-1.5">
@@ -136,11 +198,20 @@ export function HomeView({ onChangeMood, onLogout, transactions, onClearHistory,
             </div>
             <div>
               <p className="text-[10px] text-muted-foreground">Saidas</p>
-              <p className="text-xs font-semibold text-vanessa-danger">R$ {balance.expenses.toFixed(2)}</p>
+              <p className="text-xs font-semibold text-vanessa-danger">R$ {expenses.toFixed(2)}</p>
             </div>
           </div>
         </div>
       </motion.div>
+
+      {fixedCostReminders.dueSoon.length > 0 && (
+        <div className="rounded-2xl border border-vanessa-warning/30 bg-vanessa-warning/10 px-4 py-3">
+          <p className="text-xs font-medium uppercase tracking-[0.12em] text-vanessa-warning">Lembrete de vencimento</p>
+          <p className="mt-1 text-xs text-secondary-foreground">
+            {fixedCostReminders.dueSoon.map(item => `${item.name} (${item.daysLeft}d)`).join(' • ')}
+          </p>
+        </div>
+      )}
 
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
@@ -197,6 +268,30 @@ export function HomeView({ onChangeMood, onLogout, transactions, onClearHistory,
           </div>
         )}
       </div>
+
+      {showDueModal && fixedCostReminders.dueToday.length > 0 && (
+        <div className="fixed inset-0 z-50 flex items-end bg-background/70 backdrop-blur-sm">
+          <div className="w-full rounded-t-3xl border-t border-border bg-card p-5 pb-8">
+            <p className="text-sm font-medium text-foreground">Vencimento hoje</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Voce tem gasto(s) fixo(s) vencendo hoje:
+            </p>
+            <ul className="mt-3 flex flex-col gap-1 text-sm text-secondary-foreground">
+              {fixedCostReminders.dueToday.map(item => (
+                <li key={item.id}>
+                  {item.name} - R$ {item.amount.toFixed(2)}
+                </li>
+              ))}
+            </ul>
+            <button
+              onClick={() => setShowDueModal(false)}
+              className="mt-4 w-full rounded-xl bg-vanessa-lavender px-4 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-vanessa-lavender/90"
+            >
+              Entendi
+            </button>
+          </div>
+        </div>
+      )}
     </motion.div>
   )
 }

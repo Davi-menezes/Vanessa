@@ -61,6 +61,9 @@ export function TransactionList({ transactions, hiddenIds, onHideNotification, o
             <p className="text-sm font-medium text-foreground">{tx.description}</p>
             <div className="flex items-center gap-2">
               <span className="text-xs text-muted-foreground">{CATEGORY_LABELS[tx.category]}</span>
+              <span className="text-xs text-muted-foreground/60">
+                {tx.paymentMethod === 'credito' ? 'Credito' : 'Conta corrente'}
+              </span>
               {tx.mood && (
                 <>
                   <span className="text-xs text-muted-foreground/50">{'|'}</span>

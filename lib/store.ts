@@ -127,9 +127,9 @@ function getUserFixedCostsKey(): string {
   return user ? `vanessa_fixed_costs_${user.id}` : 'vanessa_fixed_costs'
 }
 
-function getUserFixedCostsAppliedKey(): string {
+function getUserFixedCostsPaidKey(): string {
   const user = getCurrentUser()
-  return user ? `vanessa_fixed_costs_applied_${user.id}` : 'vanessa_fixed_costs_applied'
+  return user ? `vanessa_fixed_costs_paid_${user.id}` : 'vanessa_fixed_costs_paid'
 }
 
 // --- Moods ---
@@ -167,7 +167,11 @@ export function getTodayMood(): MoodEntry | null {
 export function getTransactions(): Transaction[] {
   if (typeof window === 'undefined') return []
   const data = localStorage.getItem(getUserTransactionsKey())
-  return data ? JSON.parse(data) : []
+  const parsed: Transaction[] = data ? JSON.parse(data) : []
+  return parsed.map(tx => ({
+    ...tx,
+    paymentMethod: tx.paymentMethod || (tx.type === 'entrada' ? 'conta_corrente' : 'conta_corrente'),
+  }))
 }
 
 export function addTransaction(tx: Omit<Transaction, 'id'>): Transaction {
@@ -206,6 +210,7 @@ export function clearTransactions(): void {
   localStorage.setItem(getUserTransactionsKey(), JSON.stringify([]))
   localStorage.setItem(getUserHomeHiddenNotificationsKey(), JSON.stringify([]))
   localStorage.setItem(getUserExpensesHiddenNotificationsKey(), JSON.stringify([]))
+  localStorage.setItem(getUserFixedCostsPaidKey(), JSON.stringify({}))
 }
 
 export function getHiddenHomeTransactionIds(): string[] {
@@ -407,6 +412,15 @@ export function deleteFixedCost(id: string): boolean {
   return true
 }
 
+export function updateFixedCost(id: string, updates: Partial<FixedCost>): FixedCost | null {
+  const costs = getFixedCosts()
+  const index = costs.findIndex(item => item.id === id)
+  if (index === -1) return null
+  costs[index] = { ...costs[index], ...updates, id: costs[index].id }
+  localStorage.setItem(getUserFixedCostsKey(), JSON.stringify(costs))
+  return costs[index]
+}
+
 export function getMonthlyIncomeFromTransactions(): number {
   const now = new Date()
   return getTransactions()
@@ -421,14 +435,18 @@ export function getMonthlyFixedCostsTotal(): number {
   return getFixedCosts().reduce((sum, item) => sum + item.amount, 0)
 }
 
-function getFixedCostsAppliedMap(): Record<string, string> {
+export function getPiggyBanksSavedTotal(): number {
+  return getPiggyBanks().reduce((sum, item) => sum + item.savedAmount, 0)
+}
+
+function getFixedCostsPaidMap(): Record<string, string> {
   if (typeof window === 'undefined') return {}
-  const raw = localStorage.getItem(getUserFixedCostsAppliedKey())
+  const raw = localStorage.getItem(getUserFixedCostsPaidKey())
   return raw ? JSON.parse(raw) : {}
 }
 
-function saveFixedCostsAppliedMap(data: Record<string, string>): void {
-  localStorage.setItem(getUserFixedCostsAppliedKey(), JSON.stringify(data))
+function saveFixedCostsPaidMap(data: Record<string, string>): void {
+  localStorage.setItem(getUserFixedCostsPaidKey(), JSON.stringify(data))
 }
 
 function toMonthKey(date: Date): string {
@@ -442,38 +460,67 @@ function normalizeFixedCategory(category: FixedCost['category']): TransactionCat
 }
 
 export function applyDueFixedCosts(referenceDate: Date = new Date()): number {
+  // Backwards compatibility: no automatic discount anymore.
+  return 0
+}
+
+export function isFixedCostPaidInMonth(fixedCostId: string, referenceDate: Date = new Date()): boolean {
+  const paidMap = getFixedCostsPaidMap()
+  return paidMap[fixedCostId] === toMonthKey(referenceDate)
+}
+
+export function markFixedCostAsPaid(fixedCostId: string, valueOverride?: number): { success: boolean; error?: string } {
   const fixedCosts = getFixedCosts()
-  if (fixedCosts.length === 0) return 0
+  const fixedCost = fixedCosts.find(item => item.id === fixedCostId)
+  if (!fixedCost) return { success: false, error: 'Gasto fixo nao encontrado.' }
 
-  const appliedMap = getFixedCostsAppliedMap()
-  const monthKey = toMonthKey(referenceDate)
+  const paidMap = getFixedCostsPaidMap()
+  const monthKey = toMonthKey(new Date())
+  if (paidMap[fixedCostId] === monthKey) {
+    return { success: false, error: 'Esse gasto fixo ja foi marcado como pago neste mes.' }
+  }
+
+  const value = Number.isFinite(valueOverride) && valueOverride && valueOverride > 0
+    ? valueOverride
+    : fixedCost.amount
+
+  addTransaction({
+    value,
+    category: normalizeFixedCategory(fixedCost.category),
+    type: 'saida',
+    paymentMethod: 'conta_corrente',
+    description: `Gasto fixo pago: ${fixedCost.name}`,
+    moodId: null,
+    mood: null,
+    timestamp: new Date().toISOString(),
+    sleeping: false,
+    sleepUntil: null,
+  })
+
+  paidMap[fixedCostId] = monthKey
+  saveFixedCostsPaidMap(paidMap)
+  return { success: true }
+}
+
+export function getFixedCostReminders(referenceDate: Date = new Date()): {
+  dueSoon: Array<FixedCost & { daysLeft: number }>
+  dueToday: FixedCost[]
+} {
+  const fixedCosts = getFixedCosts()
   const today = referenceDate.getDate()
-  let created = 0
 
-  for (const cost of fixedCosts) {
-    const alreadyApplied = appliedMap[cost.id] === monthKey
-    const dueReached = today >= cost.dueDay
+  const dueSoon: Array<FixedCost & { daysLeft: number }> = []
+  const dueToday: FixedCost[] = []
 
-    if (!alreadyApplied && dueReached) {
-      addTransaction({
-        value: cost.amount,
-        category: normalizeFixedCategory(cost.category),
-        type: 'saida',
-        description: `Gasto fixo: ${cost.name}`,
-        moodId: null,
-        mood: null,
-        timestamp: new Date().toISOString(),
-        sleeping: false,
-        sleepUntil: null,
-      })
-      appliedMap[cost.id] = monthKey
-      created += 1
+  for (const item of fixedCosts) {
+    if (isFixedCostPaidInMonth(item.id, referenceDate)) continue
+    const daysLeft = item.dueDay - today
+    if (daysLeft === 0) {
+      dueToday.push(item)
+    } else if (daysLeft > 0 && daysLeft <= 3) {
+      dueSoon.push({ ...item, daysLeft })
     }
   }
 
-  if (created > 0) {
-    saveFixedCostsAppliedMap(appliedMap)
-  }
-
-  return created
+  return { dueSoon, dueToday }
 }

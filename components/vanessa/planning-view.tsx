@@ -18,6 +18,9 @@ import {
   getMonthlyIncomeFromTransactions,
   getPiggyBanks,
   getPlanningGoals,
+  isFixedCostPaidInMonth,
+  markFixedCostAsPaid,
+  updateFixedCost,
   updatePiggyBank,
 } from '@/lib/store'
 import type { FixedCost } from '@/lib/types'
@@ -47,6 +50,8 @@ export function PlanningView() {
   const [fixedAmount, setFixedAmount] = useState('')
   const [fixedDueDay, setFixedDueDay] = useState('10')
   const [fixedCategory, setFixedCategory] = useState<FixedCost['category']>('moradia')
+  const [piggyAdjustById, setPiggyAdjustById] = useState<Record<string, string>>({})
+  const [fixedEditById, setFixedEditById] = useState<Record<string, string>>({})
 
   const refreshData = () => {
     setPiggyBanks(getPiggyBanks())
@@ -85,6 +90,12 @@ export function PlanningView() {
     const nextSaved = Math.max(current.savedAmount + delta, 0)
     updatePiggyBank(id, { savedAmount: nextSaved })
     refreshData()
+  }
+
+  const getPiggyAdjustValue = (id: string): number => {
+    const raw = piggyAdjustById[id] || ''
+    const parsed = Number(raw.replace(',', '.'))
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 0
   }
 
   const handleAddGoal = (e: React.FormEvent) => {
@@ -190,6 +201,7 @@ export function PlanningView() {
 
         {piggyBanks.map(item => {
           const progress = item.targetAmount > 0 ? Math.min((item.savedAmount / item.targetAmount) * 100, 100) : 0
+          const adjustValue = getPiggyAdjustValue(item.id)
           return (
             <div key={item.id} className="rounded-2xl border border-border/40 bg-secondary/20 p-3">
               <div className="flex items-center justify-between">
@@ -204,12 +216,37 @@ export function PlanningView() {
               <div className="mt-2 h-2 w-full rounded-full bg-secondary">
                 <div className="h-2 rounded-full bg-vanessa-lavender transition-all" style={{ width: `${progress}%` }} />
               </div>
+              <Input
+                type="number"
+                step="0.01"
+                min="0"
+                value={piggyAdjustById[item.id] || ''}
+                onChange={e => setPiggyAdjustById(prev => ({ ...prev, [item.id]: e.target.value }))}
+                placeholder="Valor para adicionar/remover"
+                className="mt-3 border-border bg-secondary/30"
+              />
               <div className="mt-3 flex gap-2">
-                <Button type="button" variant="outline" className="flex-1 border-border text-secondary-foreground" onClick={() => handlePiggyDelta(item.id, 50)}>
-                  + R$ 50
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1 border-border text-secondary-foreground"
+                  onClick={() => {
+                    if (adjustValue <= 0) return
+                    handlePiggyDelta(item.id, adjustValue)
+                  }}
+                >
+                  + valor
                 </Button>
-                <Button type="button" variant="outline" className="flex-1 border-border text-secondary-foreground" onClick={() => handlePiggyDelta(item.id, -50)}>
-                  - R$ 50
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1 border-border text-secondary-foreground"
+                  onClick={() => {
+                    if (adjustValue <= 0) return
+                    handlePiggyDelta(item.id, -adjustValue)
+                  }}
+                >
+                  - valor
                 </Button>
               </div>
             </div>
@@ -382,6 +419,50 @@ export function PlanningView() {
                 <CalendarDays className="h-3.5 w-3.5" />
                 dia {item.dueDay}
               </p>
+            </div>
+            <div className="mt-3 flex items-center gap-2">
+              <Input
+                type="number"
+                step="0.01"
+                min="0"
+                value={fixedEditById[item.id] ?? String(item.amount)}
+                onChange={e => setFixedEditById(prev => ({ ...prev, [item.id]: e.target.value }))}
+                className="border-border bg-secondary/30"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                className="border-border text-secondary-foreground"
+                onClick={() => {
+                  const value = Number((fixedEditById[item.id] ?? String(item.amount)).replace(',', '.'))
+                  if (!Number.isFinite(value) || value <= 0) return
+                  updateFixedCost(item.id, { amount: value })
+                  refreshData()
+                }}
+              >
+                Atualizar
+              </Button>
+            </div>
+            <div className="mt-3">
+              {isFixedCostPaidInMonth(item.id) ? (
+                <p className="rounded-xl bg-vanessa-success/10 px-3 py-2 text-xs text-vanessa-success">
+                  Pago neste mes (ja entrou na saida e no relatorio)
+                </p>
+              ) : (
+                <Button
+                  type="button"
+                  className="w-full bg-vanessa-lavender text-primary-foreground hover:bg-vanessa-lavender/90"
+                  onClick={() => {
+                    const edited = Number((fixedEditById[item.id] ?? String(item.amount)).replace(',', '.'))
+                    const customValue = Number.isFinite(edited) && edited > 0 ? edited : item.amount
+                    updateFixedCost(item.id, { amount: customValue })
+                    markFixedCostAsPaid(item.id, customValue)
+                    refreshData()
+                  }}
+                >
+                  Marcar como pago
+                </Button>
+              )}
             </div>
           </div>
         ))}
