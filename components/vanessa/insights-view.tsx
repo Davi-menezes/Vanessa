@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import { Download, FileText, TrendingUp, Brain } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { getMoodGastosCorrelation, getCategorySpending, getTransactions } from '@/lib/store'
+import { getTransactions } from '@/lib/store'
 import { MOOD_CONFIG, CATEGORY_LABELS } from '@/lib/types'
 import type { TransactionCategory, MoodType } from '@/lib/types'
 
@@ -19,26 +19,44 @@ const moodColors: Record<string, string> = {
 const catColors = ['#a78bfa', '#5b8db8', '#5bb88d', '#d4a030', '#e87c7c', '#7c9ee8', '#c77ce8', '#888']
 
 export function InsightsView() {
-  const moodGastos = getMoodGastosCorrelation()
-  const categorySpending = getCategorySpending()
   const transactions = getTransactions()
 
-  const totalExpenses = transactions.filter(t => t.type === 'saida' && !t.sleeping).reduce((s, t) => s + t.value, 0)
-  const impulsiveExpenses = transactions
+  const expenseTransactions = transactions.filter(t => t.type === 'saida' && !t.sleeping)
+  const totalExpenses = expenseTransactions.reduce((s, t) => s + t.value, 0)
+  const totalIncome = transactions.filter(t => t.type === 'entrada' && !t.sleeping).reduce((s, t) => s + t.value, 0)
+
+  const impulsiveExpenses = expenseTransactions
     .filter(t => t.type === 'saida' && !t.sleeping && t.mood && MOOD_CONFIG[t.mood as MoodType]?.isImpulsive)
     .reduce((s, t) => s + t.value, 0)
   const impulsivePercent = totalExpenses > 0 ? Math.round((impulsiveExpenses / totalExpenses) * 100) : 0
 
-  const moodChartData = moodGastos.map(d => ({
-    name: MOOD_CONFIG[d.mood as MoodType]?.label || d.mood,
-    total: d.total,
-    mood: d.mood,
+  const moodMap = new Map<string, { total: number; count: number }>()
+  for (const tx of expenseTransactions) {
+    if (!tx.mood) continue
+    const previous = moodMap.get(tx.mood) || { total: 0, count: 0 }
+    previous.total += tx.value
+    previous.count += 1
+    moodMap.set(tx.mood, previous)
+  }
+  const moodChartData = Array.from(moodMap.entries()).map(([mood, data]) => ({
+    name: MOOD_CONFIG[mood as MoodType]?.label || mood,
+    total: data.total,
+    mood,
   }))
 
-  const catChartData = categorySpending.map(d => ({
-    name: CATEGORY_LABELS[d.category as TransactionCategory] || d.category,
-    total: d.total,
+  const categoryMap = new Map<string, number>()
+  for (const tx of expenseTransactions) {
+    categoryMap.set(tx.category, (categoryMap.get(tx.category) || 0) + tx.value)
+  }
+  const catChartData = Array.from(categoryMap.entries()).map(([category, total]) => ({
+    name: CATEGORY_LABELS[category as TransactionCategory] || category,
+    total,
   }))
+
+  const typeChartData = [
+    { name: 'Entradas', total: totalIncome, color: '#5bb88d' },
+    { name: 'Saidas', total: totalExpenses, color: '#e87c7c' },
+  ].filter(item => item.total > 0)
 
   const handleExportCSV = () => {
     const headers = 'Data,Descricao,Categoria,Tipo,Valor,Humor\n'
@@ -54,27 +72,45 @@ export function InsightsView() {
     URL.revokeObjectURL(url)
   }
 
-  const handleGeneratePDF = () => {
-    // Simulate PDF generation
-    const content = `
-RELATORIO VANESSA
-==================
-Periodo: ${new Date().toLocaleDateString('pt-BR')}
-Total de Transacoes: ${transactions.length}
-Gastos Totais: R$ ${totalExpenses.toFixed(2)}
-Gastos Impulsivos: R$ ${impulsiveExpenses.toFixed(2)} (${impulsivePercent}%)
+  const handleGeneratePDF = async () => {
+    const { jsPDF } = await import('jspdf')
+    const doc = new jsPDF()
 
-DETALHES:
-${transactions.map(t => `${new Date(t.timestamp).toLocaleDateString('pt-BR')} | ${t.description} | ${t.type === 'entrada' ? '+' : '-'}R$ ${t.value.toFixed(2)} | ${t.mood || 'N/A'}`).join('\n')}
-    `.trim()
+    doc.setFillColor(14, 20, 44)
+    doc.rect(0, 0, 210, 38, 'F')
+    doc.setTextColor(255, 255, 255)
+    doc.setFontSize(20)
+    doc.text('Relatorio Financeiro Vanessa', 14, 18)
+    doc.setFontSize(10)
+    doc.text(`Gerado em ${new Date().toLocaleDateString('pt-BR')}`, 14, 26)
 
-    const blob = new Blob([content], { type: 'text/plain' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'vanessa-relatorio.txt'
-    a.click()
-    URL.revokeObjectURL(url)
+    doc.setTextColor(40, 40, 40)
+    doc.setFontSize(12)
+    doc.text(`Total de transacoes: ${transactions.length}`, 14, 52)
+    doc.text(`Receitas do periodo: R$ ${totalIncome.toFixed(2)}`, 14, 60)
+    doc.text(`Gastos do periodo: R$ ${totalExpenses.toFixed(2)}`, 14, 68)
+    doc.text(`Gastos impulsivos: R$ ${impulsiveExpenses.toFixed(2)} (${impulsivePercent}%)`, 14, 76)
+
+    doc.setFontSize(13)
+    doc.text('Detalhamento', 14, 90)
+    doc.setFontSize(10)
+
+    let y = 98
+    const maxRows = Math.min(transactions.length, 28)
+    for (let i = 0; i < maxRows; i += 1) {
+      const tx = transactions[i]
+      const sign = tx.type === 'entrada' ? '+' : '-'
+      const line = `${new Date(tx.timestamp).toLocaleDateString('pt-BR')} | ${tx.description.slice(0, 28)} | ${sign}R$ ${tx.value.toFixed(2)} | ${CATEGORY_LABELS[tx.category]}`
+      doc.text(line, 14, y)
+      y += 6
+      if (y > 280) break
+    }
+
+    if (transactions.length > maxRows) {
+      doc.text(`... e mais ${transactions.length - maxRows} transacoes`, 14, Math.min(y + 2, 286))
+    }
+
+    doc.save(`vanessa-relatorio-${new Date().toISOString().slice(0, 10)}.pdf`)
   }
 
   return (
@@ -170,7 +206,37 @@ ${transactions.map(t => `${new Date(t.timestamp).toLocaleDateString('pt-BR')} | 
       )}
 
       {/* No data state */}
-      {moodChartData.length === 0 && catChartData.length === 0 && (
+      {moodChartData.length === 0 && catChartData.length === 0 && typeChartData.length > 0 && (
+        <div className="flex flex-col gap-3">
+          <h3 className="text-sm font-medium text-secondary-foreground">Entradas vs Saidas</h3>
+          <div className="h-52 w-full rounded-2xl border border-border/50 bg-secondary/20 p-3">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={typeChartData} barSize={40}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#888' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: '#888' }} axisLine={false} tickLine={false} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'rgba(26, 26, 46, 0.95)',
+                    border: '1px solid rgba(167, 139, 250, 0.2)',
+                    borderRadius: '12px',
+                    fontSize: 12,
+                    color: '#e0e0e0'
+                  }}
+                  formatter={(value: number) => [`R$ ${value.toFixed(2)}`, 'Total']}
+                />
+                <Bar dataKey="total" radius={[8, 8, 0, 0]}>
+                  {typeChartData.map((entry, index) => (
+                    <Cell key={`type-cell-${index}`} fill={entry.color} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {moodChartData.length === 0 && catChartData.length === 0 && typeChartData.length === 0 && (
         <div className="flex flex-col items-center gap-3 py-12">
           <TrendingUp className="h-10 w-10 text-muted-foreground/30" />
           <p className="text-sm text-muted-foreground">Registre gastos para ver insights</p>
