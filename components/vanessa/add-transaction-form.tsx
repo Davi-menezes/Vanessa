@@ -82,7 +82,7 @@ export function AddTransactionForm({ onAdd, onClose }: AddTransactionFormProps) 
               onClick={() => setType('entrada')}
               className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${type === 'entrada' ? 'bg-vanessa-success/20 text-vanessa-success' : 'text-muted-foreground'}`}
             >
-              Entrada
+              Receita
             </button>
           </div>
 
@@ -115,7 +115,7 @@ export function AddTransactionForm({ onAdd, onClose }: AddTransactionFormProps) 
                     : 'text-muted-foreground'
                 }`}
               >
-                Outra entrada
+                Outra receita
               </button>
             </div>
           )}

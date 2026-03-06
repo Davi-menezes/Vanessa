@@ -25,7 +25,7 @@ export function TransactionsView({ transactions, onSleep, onDelete, onAddNew }: 
       <div className="flex items-end justify-between">
         <div>
           <p className="mb-1 text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">Transacoes</p>
-          <h2 className="text-xl font-semibold text-foreground">Seus Gastos</h2>
+          <h2 className="text-xl font-semibold text-foreground">Suas Movimentacoes</h2>
         </div>
         <motion.button
           whileTap={{ scale: 0.9 }}

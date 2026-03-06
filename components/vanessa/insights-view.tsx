@@ -43,7 +43,7 @@ export function InsightsView() {
   const handleExportCSV = () => {
     const headers = 'Data,Descricao,Categoria,Tipo,Valor,Humor\n'
     const rows = transactions.map(t =>
-      `${new Date(t.timestamp).toLocaleDateString('pt-BR')},${t.description},${CATEGORY_LABELS[t.category]},${t.type === 'entrada' ? 'Entrada' : 'Saida'},${t.value.toFixed(2)},${t.mood || 'N/A'}`
+      `${new Date(t.timestamp).toLocaleDateString('pt-BR')},${t.description},${CATEGORY_LABELS[t.category]},${t.type === 'entrada' ? 'Receita' : 'Saida'},${t.value.toFixed(2)},${t.mood || 'N/A'}`
     ).join('\n')
     const blob = new Blob([headers + rows], { type: 'text/csv' })
     const url = URL.createObjectURL(blob)
