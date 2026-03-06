@@ -150,14 +150,14 @@ export function AddTransactionForm({ onAdd, onClose }: AddTransactionFormProps) 
 
           <div className="flex flex-col gap-1.5">
             <Label className="text-xs text-muted-foreground">Categoria</Label>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-3 gap-2">
               {categories.map(cat => (
                 <motion.button
                   key={cat}
                   type="button"
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setCategory(cat)}
-                  className={`rounded-lg border px-2 py-2 text-xs transition-colors ${
+                  className={`rounded-lg border px-2 py-2 text-[11px] transition-colors ${
                     category === cat
                       ? 'border-vanessa-lavender/50 bg-vanessa-lavender/15 text-vanessa-lavender'
                       : 'border-border text-muted-foreground'
