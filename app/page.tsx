@@ -16,8 +16,8 @@ import {
   addMood,
   getLatestMood,
   addTransaction,
+  clearTransactions,
   getTransactions,
-  updateTransaction,
   getCurrentUser,
   logout,
 } from '@/lib/store'
@@ -122,16 +122,6 @@ export default function VanessaApp() {
     refresh()
   }
 
-  const handleSleepTransaction = (id: string) => {
-    const sleepUntil = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-    updateTransaction(id, { sleeping: true, sleepUntil })
-    refresh()
-  }
-
-  const handleDeleteTransaction = (id: string) => {
-    refresh()
-  }
-
   // Show nothing until auth is checked
   if (!authChecked) {
     return (
@@ -172,6 +162,13 @@ export default function VanessaApp() {
               <HomeView
                 key="home"
                 onChangeMood={() => setShowMoodCheckin(true)}
+                transactions={transactions}
+                onClearHistory={() => {
+                  if (confirm('Tem certeza que deseja limpar todo o historico de transacoes?')) {
+                    clearTransactions()
+                    refresh()
+                  }
+                }}
                 userName={user.name}
               />
             )}
@@ -179,9 +176,30 @@ export default function VanessaApp() {
               <TransactionsView
                 key="transacoes"
                 transactions={transactions}
-                onSleep={handleSleepTransaction}
-                onDelete={handleDeleteTransaction}
                 onAddNew={() => setShowAddForm(true)}
+                onClearHistory={() => {
+                  if (confirm('Tem certeza que deseja limpar todo o historico de transacoes?')) {
+                    clearTransactions()
+                    refresh()
+                  }
+                }}
+                onImportReceipt={(items) => {
+                  const latestMood = getLatestMood()
+                  for (const item of items) {
+                    addTransaction({
+                      value: item.value,
+                      category: item.category,
+                      type: 'saida',
+                      description: item.description,
+                      moodId: latestMood?.id || null,
+                      mood: latestMood?.mood || null,
+                      timestamp: new Date().toISOString(),
+                      sleeping: false,
+                      sleepUntil: null,
+                    })
+                  }
+                  refresh()
+                }}
               />
             )}
             {activeTab === 'insights' && <InsightsView key={`insights-${refreshKey}`} />}

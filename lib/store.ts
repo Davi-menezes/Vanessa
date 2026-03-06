@@ -165,6 +165,10 @@ export function deleteTransaction(id: string): boolean {
   return true
 }
 
+export function clearTransactions(): void {
+  localStorage.setItem(getUserTransactionsKey(), JSON.stringify([]))
+}
+
 export function getAwakeSleepingTransactions(): Transaction[] {
   const transactions = getTransactions()
   const now = new Date()

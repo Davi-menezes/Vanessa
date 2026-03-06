@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowUp, ArrowDown, Wallet, Brain, Sparkles, CloudRain, Leaf, Meh } from 'lucide-react'
-import type { MoodType } from '@/lib/types'
+import { ArrowUp, ArrowDown, Wallet, Brain, Sparkles, CloudRain, Leaf, Meh, Trash2 } from 'lucide-react'
+import type { MoodType, Transaction } from '@/lib/types'
 import { MOOD_CONFIG } from '@/lib/types'
 import { getMonthlyBalance, getLatestMood, getMonthlyFixedCostsTotal } from '@/lib/store'
 import { Switch } from '@/components/ui/switch'
@@ -18,15 +18,25 @@ const moodIcons: Record<MoodType, React.ReactNode> = {
 
 interface HomeViewProps {
   onChangeMood: () => void
+  transactions: Transaction[]
+  onClearHistory: () => void
   userName?: string
 }
 
-export function HomeView({ onChangeMood, userName }: HomeViewProps) {
+export function HomeView({ onChangeMood, transactions, onClearHistory, userName }: HomeViewProps) {
   const [showDiscountedBalance, setShowDiscountedBalance] = useState(true)
   const balance = getMonthlyBalance()
   const fixedCostsTotal = getMonthlyFixedCostsTotal()
   const displayedBalance = showDiscountedBalance ? balance.balance - fixedCostsTotal : balance.balance
   const latestMood = getLatestMood()
+  const recentTxs = useMemo(
+    () =>
+      [...transactions]
+        .filter(t => !t.sleeping)
+        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+        .slice(0, 4),
+    [transactions]
+  )
 
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite'
@@ -98,7 +108,7 @@ export function HomeView({ onChangeMood, userName }: HomeViewProps) {
               <ArrowUp className="h-3 w-3 text-vanessa-success" />
             </div>
             <div>
-              <p className="text-[10px] text-muted-foreground">Receitas</p>
+              <p className="text-[10px] text-muted-foreground">Entradas</p>
               <p className="text-xs font-semibold text-vanessa-success">R$ {balance.income.toFixed(2)}</p>
             </div>
           </div>
@@ -113,6 +123,51 @@ export function HomeView({ onChangeMood, userName }: HomeViewProps) {
           </div>
         </div>
       </motion.div>
+
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">Historico</p>
+          {transactions.length > 0 && (
+            <button
+              onClick={onClearHistory}
+              className="flex items-center gap-1 rounded-lg border border-border/50 px-2 py-1 text-[10px] text-muted-foreground transition-colors hover:bg-secondary/40"
+              aria-label="Limpar historico"
+            >
+              <Trash2 className="h-3 w-3" />
+              Limpar
+            </button>
+          )}
+        </div>
+        {recentTxs.length > 0 ? (
+          recentTxs.map(tx => (
+            <div
+              key={tx.id}
+              className="flex items-center gap-3 rounded-xl border border-border/30 bg-secondary/20 px-3.5 py-2.5"
+            >
+              <div className={`flex h-8 w-8 items-center justify-center rounded-full ${tx.type === 'entrada' ? 'bg-vanessa-success/15' : 'bg-vanessa-danger/15'}`}>
+                {tx.type === 'entrada' ? (
+                  <ArrowUp className="h-3.5 w-3.5 text-vanessa-success" />
+                ) : (
+                  <ArrowDown className="h-3.5 w-3.5 text-vanessa-danger" />
+                )}
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-foreground">{tx.description}</p>
+                <p className="text-[10px] text-muted-foreground">
+                  {new Date(tx.timestamp).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
+                </p>
+              </div>
+              <span className={`text-sm font-semibold ${tx.type === 'entrada' ? 'text-vanessa-success' : 'text-foreground'}`}>
+                {tx.type === 'entrada' ? '+' : '-'}R$ {tx.value.toFixed(2)}
+              </span>
+            </div>
+          ))
+        ) : (
+          <div className="rounded-xl border border-border/30 bg-secondary/15 px-3 py-4 text-center text-xs text-muted-foreground">
+            Nenhuma transacao registrada.
+          </div>
+        )}
+      </div>
     </motion.div>
   )
 }
