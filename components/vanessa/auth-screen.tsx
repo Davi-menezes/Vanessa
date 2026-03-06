@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Mail, Lock, User, ArrowRight, Eye, EyeOff } from 'lucide-react'
-import { signup, login } from '@/lib/store'
+import { signup, login, resetPassword } from '@/lib/store'
 import type { User as UserType } from '@/lib/types'
 
 interface AuthScreenProps {
@@ -18,6 +18,13 @@ export function AuthScreen({ onAuth }: AuthScreenProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showResetModal, setShowResetModal] = useState(false)
+  const [resetEmail, setResetEmail] = useState('')
+  const [resetPasswordValue, setResetPasswordValue] = useState('')
+  const [resetConfirmPassword, setResetConfirmPassword] = useState('')
+  const [resetError, setResetError] = useState('')
+  const [resetSuccess, setResetSuccess] = useState('')
+  const [resetLoading, setResetLoading] = useState(false)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -72,6 +79,56 @@ export function AuthScreen({ onAuth }: AuthScreenProps) {
   const switchMode = () => {
     setMode(m => (m === 'login' ? 'signup' : 'login'))
     setError('')
+  }
+
+  const openResetModal = () => {
+    setResetEmail(email)
+    setResetPasswordValue('')
+    setResetConfirmPassword('')
+    setResetError('')
+    setResetSuccess('')
+    setShowResetModal(true)
+  }
+
+  const handleResetPassword = (e: React.FormEvent) => {
+    e.preventDefault()
+    setResetError('')
+    setResetSuccess('')
+
+    if (!resetEmail.trim()) {
+      setResetError('Informe seu email.')
+      return
+    }
+
+    if (resetPasswordValue.length < 4) {
+      setResetError('A nova senha precisa ter pelo menos 4 caracteres.')
+      return
+    }
+
+    if (resetPasswordValue !== resetConfirmPassword) {
+      setResetError('As senhas nao conferem.')
+      return
+    }
+
+    setResetLoading(true)
+    setTimeout(() => {
+      const result = resetPassword(resetEmail, resetPasswordValue)
+      if (!result.success) {
+        setResetError(result.error || 'Nao foi possivel redefinir sua senha.')
+        setResetLoading(false)
+        return
+      }
+
+      setResetSuccess('Senha redefinida com sucesso. Agora faca login.')
+      setEmail(resetEmail)
+      setPassword('')
+      setMode('login')
+      setResetLoading(false)
+
+      setTimeout(() => {
+        setShowResetModal(false)
+      }, 700)
+    }, 300)
   }
 
   return (
@@ -210,8 +267,16 @@ export function AuthScreen({ onAuth }: AuthScreenProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.55 }}
-          className="mt-6 text-center"
+          className="mt-6 flex w-full flex-col items-center gap-3 text-center"
         >
+          {mode === 'login' && (
+            <button
+              onClick={openResetModal}
+              className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Esqueci minha senha
+            </button>
+          )}
           <button
             onClick={switchMode}
             className="text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -230,6 +295,115 @@ export function AuthScreen({ onAuth }: AuthScreenProps) {
           </button>
         </motion.div>
       </motion.div>
+
+      <AnimatePresence>
+        {showResetModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-end bg-background/80 backdrop-blur-sm"
+          >
+            <motion.form
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 280 }}
+              onSubmit={handleResetPassword}
+              className="w-full rounded-t-3xl border-t border-border bg-card p-6 pb-10"
+            >
+              <div className="mb-5 flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-foreground">Redefinir senha</h3>
+                <button
+                  type="button"
+                  onClick={() => setShowResetModal(false)}
+                  className="text-sm text-muted-foreground"
+                >
+                  Fechar
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <div className="relative">
+                  <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type="email"
+                    value={resetEmail}
+                    onChange={e => setResetEmail(e.target.value)}
+                    placeholder="Seu email"
+                    className="w-full rounded-xl border border-border/60 bg-secondary/40 py-3 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-vanessa-lavender/50 focus:outline-none focus:ring-1 focus:ring-vanessa-lavender/30 transition-colors"
+                  />
+                </div>
+
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type="password"
+                    value={resetPasswordValue}
+                    onChange={e => setResetPasswordValue(e.target.value)}
+                    placeholder="Nova senha"
+                    className="w-full rounded-xl border border-border/60 bg-secondary/40 py-3 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-vanessa-lavender/50 focus:outline-none focus:ring-1 focus:ring-vanessa-lavender/30 transition-colors"
+                  />
+                </div>
+
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type="password"
+                    value={resetConfirmPassword}
+                    onChange={e => setResetConfirmPassword(e.target.value)}
+                    placeholder="Confirmar nova senha"
+                    className="w-full rounded-xl border border-border/60 bg-secondary/40 py-3 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-vanessa-lavender/50 focus:outline-none focus:ring-1 focus:ring-vanessa-lavender/30 transition-colors"
+                  />
+                </div>
+              </div>
+
+              <AnimatePresence>
+                {resetError && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    className="mt-3 rounded-lg bg-vanessa-danger/10 px-3 py-2 text-xs text-vanessa-danger"
+                  >
+                    {resetError}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+
+              <AnimatePresence>
+                {resetSuccess && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    className="mt-3 rounded-lg bg-vanessa-success/10 px-3 py-2 text-xs text-vanessa-success"
+                  >
+                    {resetSuccess}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+
+              <motion.button
+                type="submit"
+                disabled={resetLoading}
+                whileTap={{ scale: 0.97 }}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-vanessa-lavender py-3 text-sm font-semibold text-background transition-opacity disabled:opacity-50"
+              >
+                {resetLoading ? (
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 0.8, ease: 'linear' }}
+                    className="h-4 w-4 rounded-full border-2 border-background/30 border-t-background"
+                  />
+                ) : (
+                  'Redefinir senha'
+                )}
+              </motion.button>
+            </motion.form>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

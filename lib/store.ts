@@ -59,6 +59,24 @@ export function login(email: string, password: string): { success: boolean; erro
   return { success: true, user }
 }
 
+export function resetPassword(email: string, newPassword: string): { success: boolean; error?: string } {
+  const users = getUsers()
+  const normalizedEmail = email.toLowerCase().trim()
+  const index = users.findIndex(u => u.email === normalizedEmail)
+
+  if (index === -1) {
+    return { success: false, error: 'Email nao encontrado.' }
+  }
+
+  if (newPassword.length < 4) {
+    return { success: false, error: 'A nova senha precisa ter pelo menos 4 caracteres.' }
+  }
+
+  users[index] = { ...users[index], password: newPassword }
+  saveUsers(users)
+  return { success: true }
+}
+
 export function logout() {
   localStorage.removeItem(SESSION_KEY)
 }
