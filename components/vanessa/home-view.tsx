@@ -74,10 +74,10 @@ export function HomeView({ onChangeMood, onLogout, transactions, onClearHistory,
   )
 
   useEffect(() => {
-    if (fixedCostReminders.dueToday.length > 0) {
+    if (fixedCostReminders.dueToday.length > 0 || fixedCostReminders.overdue.length > 0) {
       setShowDueModal(true)
     }
-  }, [fixedCostReminders.dueToday.length])
+  }, [fixedCostReminders.dueToday.length, fixedCostReminders.overdue.length])
 
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite'
@@ -269,17 +269,19 @@ export function HomeView({ onChangeMood, onLogout, transactions, onClearHistory,
         )}
       </div>
 
-      {showDueModal && fixedCostReminders.dueToday.length > 0 && (
+      {showDueModal && (fixedCostReminders.dueToday.length > 0 || fixedCostReminders.overdue.length > 0) && (
         <div className="fixed inset-0 z-50 flex items-end bg-background/70 backdrop-blur-sm">
           <div className="w-full rounded-t-3xl border-t border-border bg-card p-5 pb-8">
-            <p className="text-sm font-medium text-foreground">Vencimento hoje</p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Voce tem gasto(s) fixo(s) vencendo hoje:
-            </p>
+            <p className="text-sm font-medium text-foreground">Lembrete de gastos fixos</p>
             <ul className="mt-3 flex flex-col gap-1 text-sm text-secondary-foreground">
               {fixedCostReminders.dueToday.map(item => (
                 <li key={item.id}>
-                  {item.name} - R$ {item.amount.toFixed(2)}
+                  Vence hoje: {item.name} - R$ {item.amount.toFixed(2)}
+                </li>
+              ))}
+              {fixedCostReminders.overdue.map(item => (
+                <li key={item.id}>
+                  Em atraso ha {item.daysOverdue} dia(s): {item.name} - R$ {item.amount.toFixed(2)}
                 </li>
               ))}
             </ul>

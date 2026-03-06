@@ -505,22 +505,26 @@ export function markFixedCostAsPaid(fixedCostId: string, valueOverride?: number)
 export function getFixedCostReminders(referenceDate: Date = new Date()): {
   dueSoon: Array<FixedCost & { daysLeft: number }>
   dueToday: FixedCost[]
+  overdue: Array<FixedCost & { daysOverdue: number }>
 } {
   const fixedCosts = getFixedCosts()
   const today = referenceDate.getDate()
 
   const dueSoon: Array<FixedCost & { daysLeft: number }> = []
   const dueToday: FixedCost[] = []
+  const overdue: Array<FixedCost & { daysOverdue: number }> = []
 
   for (const item of fixedCosts) {
     if (isFixedCostPaidInMonth(item.id, referenceDate)) continue
     const daysLeft = item.dueDay - today
     if (daysLeft === 0) {
       dueToday.push(item)
+    } else if (daysLeft < 0) {
+      overdue.push({ ...item, daysOverdue: Math.abs(daysLeft) })
     } else if (daysLeft > 0 && daysLeft <= 3) {
       dueSoon.push({ ...item, daysLeft })
     }
   }
 
-  return { dueSoon, dueToday }
+  return { dueSoon, dueToday, overdue }
 }
