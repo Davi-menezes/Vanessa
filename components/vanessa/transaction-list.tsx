@@ -94,7 +94,7 @@ export function TransactionList({ transactions, hiddenIds, onHideNotification, o
                 }}
                 className="rounded-xl border border-border px-4 py-3 text-sm text-secondary-foreground transition-colors hover:bg-secondary"
               >
-                Apagar so a notificacao
+                Apagar apenas a notificação
               </button>
               <button
                 onClick={() => {
