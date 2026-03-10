@@ -75,6 +75,12 @@ export interface FixedCost {
   createdAt: string
 }
 
+export interface BudgetSettings {
+  monthlyLimit: number | null
+  categoryLimits: Partial<Record<TransactionCategory, number>>
+  updatedAt: string
+}
+
 export const MOOD_CONFIG: Record<MoodType, { label: string; icon: string; color: string; isImpulsive: boolean }> = {
   ansiedade: { label: 'Ansiedade', icon: 'brain', color: 'text-vanessa-warning', isImpulsive: true },
   tedio: { label: 'Tedio', icon: 'meh', color: 'text-muted-foreground', isImpulsive: false },

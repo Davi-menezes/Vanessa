@@ -1,6 +1,6 @@
 'use client'
 
-import type { MoodEntry, Transaction, MoodType, TransactionCategory, User, PiggyBank, PlanningGoal, FixedCost } from './types'
+import type { MoodEntry, Transaction, MoodType, TransactionCategory, User, PiggyBank, PlanningGoal, FixedCost, BudgetSettings } from './types'
 
 const USERS_KEY = 'vanessa_users'
 const SESSION_KEY = 'vanessa_session'
@@ -130,6 +130,11 @@ function getUserFixedCostsKey(): string {
 function getUserFixedCostsPaidKey(): string {
   const user = getCurrentUser()
   return user ? `vanessa_fixed_costs_paid_${user.id}` : 'vanessa_fixed_costs_paid'
+}
+
+function getUserBudgetSettingsKey(): string {
+  const user = getCurrentUser()
+  return user ? `vanessa_budget_settings_${user.id}` : 'vanessa_budget_settings'
 }
 
 // --- Moods ---
@@ -437,6 +442,111 @@ export function getMonthlyFixedCostsTotal(): number {
 
 export function getPiggyBanksSavedTotal(): number {
   return getPiggyBanks().reduce((sum, item) => sum + item.savedAmount, 0)
+}
+
+export function getBudgetSettings(): BudgetSettings {
+  if (typeof window === 'undefined') {
+    return { monthlyLimit: null, categoryLimits: {}, updatedAt: new Date().toISOString() }
+  }
+  const data = localStorage.getItem(getUserBudgetSettingsKey())
+  if (!data) {
+    return { monthlyLimit: null, categoryLimits: {}, updatedAt: new Date().toISOString() }
+  }
+  return JSON.parse(data)
+}
+
+function saveBudgetSettings(settings: BudgetSettings): void {
+  localStorage.setItem(getUserBudgetSettingsKey(), JSON.stringify(settings))
+}
+
+export function setMonthlyBudgetLimit(limit: number | null): BudgetSettings {
+  const current = getBudgetSettings()
+  const next: BudgetSettings = {
+    ...current,
+    monthlyLimit: limit,
+    updatedAt: new Date().toISOString(),
+  }
+  saveBudgetSettings(next)
+  return next
+}
+
+export function setCategoryBudgetLimit(category: TransactionCategory, limit: number): BudgetSettings {
+  const current = getBudgetSettings()
+  const next: BudgetSettings = {
+    ...current,
+    categoryLimits: {
+      ...current.categoryLimits,
+      [category]: limit,
+    },
+    updatedAt: new Date().toISOString(),
+  }
+  saveBudgetSettings(next)
+  return next
+}
+
+export function removeCategoryBudgetLimit(category: TransactionCategory): BudgetSettings {
+  const current = getBudgetSettings()
+  const nextLimits = { ...current.categoryLimits }
+  delete nextLimits[category]
+  const next: BudgetSettings = {
+    ...current,
+    categoryLimits: nextLimits,
+    updatedAt: new Date().toISOString(),
+  }
+  saveBudgetSettings(next)
+  return next
+}
+
+function getCurrentMonthExpenseTransactions(): Transaction[] {
+  const now = new Date()
+  return getTransactions().filter(tx => {
+    const d = new Date(tx.timestamp)
+    return tx.type === 'saida' && !tx.sleeping && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
+  })
+}
+
+export function getCurrentMonthCategoryTotals(): Array<{ category: TransactionCategory; total: number }> {
+  const txs = getCurrentMonthExpenseTransactions()
+  const map = new Map<TransactionCategory, number>()
+  for (const tx of txs) {
+    map.set(tx.category, (map.get(tx.category) || 0) + tx.value)
+  }
+  return Array.from(map.entries()).map(([category, total]) => ({ category, total }))
+}
+
+export function getSpendingControlSnapshot(): {
+  totalSpent: number
+  monthlyLimit: number | null
+  monthlyUsagePercent: number | null
+  topCategory: { category: TransactionCategory; total: number } | null
+  overCategoryLimits: Array<{ category: TransactionCategory; total: number; limit: number }>
+} {
+  const settings = getBudgetSettings()
+  const categoryTotals = getCurrentMonthCategoryTotals()
+  const totalSpent = categoryTotals.reduce((sum, item) => sum + item.total, 0)
+  const topCategory = [...categoryTotals].sort((a, b) => b.total - a.total)[0] || null
+  const monthlyUsagePercent = settings.monthlyLimit && settings.monthlyLimit > 0
+    ? Math.round((totalSpent / settings.monthlyLimit) * 100)
+    : null
+
+  const overCategoryLimits = categoryTotals
+    .filter(item => {
+      const limit = settings.categoryLimits[item.category]
+      return typeof limit === 'number' && limit > 0 && item.total > limit
+    })
+    .map(item => ({
+      category: item.category,
+      total: item.total,
+      limit: settings.categoryLimits[item.category] as number,
+    }))
+
+  return {
+    totalSpent,
+    monthlyLimit: settings.monthlyLimit,
+    monthlyUsagePercent,
+    topCategory,
+    overCategoryLimits,
+  }
 }
 
 function getFixedCostsPaidMap(): Record<string, string> {

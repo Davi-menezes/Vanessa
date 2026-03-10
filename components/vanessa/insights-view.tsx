@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import { Download, FileText, TrendingUp, Brain } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { getTransactions } from '@/lib/store'
+import { getSpendingControlSnapshot, getTransactions } from '@/lib/store'
 import { MOOD_CONFIG, CATEGORY_LABELS } from '@/lib/types'
 import type { TransactionCategory, MoodType } from '@/lib/types'
 
@@ -20,6 +20,7 @@ const catColors = ['#a78bfa', '#5b8db8', '#5bb88d', '#d4a030', '#e87c7c', '#7c9e
 
 export function InsightsView() {
   const transactions = getTransactions()
+  const spendingControl = getSpendingControlSnapshot()
 
   const expenseTransactions = transactions.filter(t => t.type === 'saida' && !t.sleeping)
   const totalExpenses = expenseTransactions.reduce((s, t) => s + t.value, 0)
@@ -57,6 +58,10 @@ export function InsightsView() {
     { name: 'Entradas', total: totalIncome, color: '#5bb88d' },
     { name: 'Saidas', total: totalExpenses, color: '#e87c7c' },
   ].filter(item => item.total > 0)
+
+  const topCategoryPercent = spendingControl.totalSpent > 0 && spendingControl.topCategory
+    ? Math.round((spendingControl.topCategory.total / spendingControl.totalSpent) * 100)
+    : 0
 
   const handleExportCSV = () => {
     const headers = 'Data,Descricao,Categoria,Tipo,Metodo,Valor,Humor\n'
@@ -141,6 +146,41 @@ export function InsightsView() {
             </p>
           </div>
         </motion.div>
+      )}
+
+      {(spendingControl.monthlyLimit || spendingControl.topCategory || spendingControl.overCategoryLimits.length > 0) && (
+        <div className="flex flex-col gap-2 rounded-2xl border border-border/60 bg-secondary/20 p-4">
+          <p className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">Controle inteligente</p>
+          {spendingControl.monthlyLimit && (
+            <p className="text-sm text-secondary-foreground">
+              Gasto do mes: <strong>R$ {spendingControl.totalSpent.toFixed(2)}</strong> de meta{' '}
+              <strong>R$ {spendingControl.monthlyLimit.toFixed(2)}</strong>
+              {spendingControl.monthlyUsagePercent !== null && (
+                <span className={spendingControl.monthlyUsagePercent >= 100 ? 'text-vanessa-danger' : 'text-muted-foreground'}>
+                  {` (${spendingControl.monthlyUsagePercent}% usado)`}
+                </span>
+              )}
+            </p>
+          )}
+          {spendingControl.topCategory && (
+            <p className="text-sm text-secondary-foreground">
+              Maior foco de gasto: <strong>{CATEGORY_LABELS[spendingControl.topCategory.category]}</strong>{' '}
+              (R$ {spendingControl.topCategory.total.toFixed(2)} / {topCategoryPercent}% do total)
+            </p>
+          )}
+          {spendingControl.overCategoryLimits.length > 0 && (
+            <div className="rounded-xl bg-vanessa-warning/10 px-3 py-2 text-xs text-vanessa-warning">
+              {spendingControl.overCategoryLimits.map(item => (
+                <p key={item.category}>
+                  Limite estourado em {CATEGORY_LABELS[item.category]}: R$ {item.total.toFixed(2)} de R$ {item.limit.toFixed(2)}
+                </p>
+              ))}
+            </div>
+          )}
+          <p className="text-xs text-muted-foreground">
+            Dica: tente reduzir 10% da categoria mais alta nas proximas 2 semanas para sentir impacto rapido no saldo.
+          </p>
+        </div>
       )}
 
       {/* Mood vs Spending Chart */}

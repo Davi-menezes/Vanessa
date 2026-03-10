@@ -13,17 +13,22 @@ import {
   deleteFixedCost,
   deletePiggyBank,
   deletePlanningGoal,
+  getBudgetSettings,
   getFixedCosts,
   getMonthlyFixedCostsTotal,
   getMonthlyIncomeFromTransactions,
   getPiggyBanks,
   getPlanningGoals,
   isFixedCostPaidInMonth,
+  removeCategoryBudgetLimit,
+  setCategoryBudgetLimit,
+  setMonthlyBudgetLimit,
   markFixedCostAsPaid,
   updateFixedCost,
   updatePiggyBank,
 } from '@/lib/store'
-import type { FixedCost } from '@/lib/types'
+import type { FixedCost, TransactionCategory } from '@/lib/types'
+import { CATEGORY_LABELS } from '@/lib/types'
 
 const FIXED_COST_LABELS: Record<FixedCost['category'], string> = {
   moradia: 'Moradia',
@@ -52,11 +57,16 @@ export function PlanningView() {
   const [fixedCategory, setFixedCategory] = useState<FixedCost['category']>('moradia')
   const [piggyAdjustById, setPiggyAdjustById] = useState<Record<string, string>>({})
   const [fixedEditById, setFixedEditById] = useState<Record<string, string>>({})
+  const [monthlyLimitInput, setMonthlyLimitInput] = useState('')
+  const [budgetCategory, setBudgetCategory] = useState<TransactionCategory>('alimentacao')
+  const [budgetCategoryValue, setBudgetCategoryValue] = useState('')
+  const [budgetSettings, setBudgetSettings] = useState(getBudgetSettings())
 
   const refreshData = () => {
     setPiggyBanks(getPiggyBanks())
     setPlanningGoals(getPlanningGoals())
     setFixedCosts(getFixedCosts())
+    setBudgetSettings(getBudgetSettings())
   }
 
   const income = getMonthlyIncomeFromTransactions()
@@ -168,6 +178,109 @@ export function PlanningView() {
           </div>
         </div>
       </div>
+
+      <section className="flex flex-col gap-3">
+        <div className="flex items-center gap-2">
+          <WalletCards className="h-4 w-4 text-vanessa-warning" />
+          <h3 className="text-sm font-medium text-secondary-foreground">Controle para Gastar Menos</h3>
+        </div>
+        <div className="rounded-2xl border border-border/50 bg-card p-3">
+          <p className="text-xs text-muted-foreground">Meta de gasto mensal total</p>
+          <div className="mt-2 flex gap-2">
+            <Input
+              type="number"
+              step="0.01"
+              min="0"
+              value={monthlyLimitInput}
+              onChange={e => setMonthlyLimitInput(e.target.value)}
+              placeholder={budgetSettings.monthlyLimit ? `${budgetSettings.monthlyLimit}` : 'Ex: 1800'}
+              className="border-border bg-secondary/30"
+            />
+            <Button
+              type="button"
+              onClick={() => {
+                const value = Number(monthlyLimitInput.replace(',', '.'))
+                if (!Number.isFinite(value) || value <= 0) {
+                  setMonthlyBudgetLimit(null)
+                } else {
+                  setMonthlyBudgetLimit(value)
+                }
+                setMonthlyLimitInput('')
+                refreshData()
+              }}
+              className="bg-vanessa-lavender text-primary-foreground hover:bg-vanessa-lavender/90"
+            >
+              Salvar
+            </Button>
+          </div>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Limite atual: {budgetSettings.monthlyLimit ? `R$ ${budgetSettings.monthlyLimit.toFixed(2)}` : 'Nao definido'}
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-border/50 bg-card p-3">
+          <p className="text-xs text-muted-foreground">Limite por categoria</p>
+          <div className="mt-2 grid grid-cols-3 gap-2">
+            {(Object.keys(CATEGORY_LABELS) as TransactionCategory[]).map(cat => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setBudgetCategory(cat)}
+                className={`rounded-lg border px-2 py-2 text-xs ${
+                  budgetCategory === cat
+                    ? 'border-vanessa-lavender/40 bg-vanessa-lavender/15 text-vanessa-lavender'
+                    : 'border-border text-muted-foreground'
+                }`}
+              >
+                {CATEGORY_LABELS[cat]}
+              </button>
+            ))}
+          </div>
+          <div className="mt-2 flex gap-2">
+            <Input
+              type="number"
+              step="0.01"
+              min="0"
+              value={budgetCategoryValue}
+              onChange={e => setBudgetCategoryValue(e.target.value)}
+              placeholder="Valor limite"
+              className="border-border bg-secondary/30"
+            />
+            <Button
+              type="button"
+              onClick={() => {
+                const value = Number(budgetCategoryValue.replace(',', '.'))
+                if (!Number.isFinite(value) || value <= 0) return
+                setCategoryBudgetLimit(budgetCategory, value)
+                setBudgetCategoryValue('')
+                refreshData()
+              }}
+              className="bg-vanessa-lavender text-primary-foreground hover:bg-vanessa-lavender/90"
+            >
+              Definir
+            </Button>
+          </div>
+
+          {Object.entries(budgetSettings.categoryLimits).length > 0 && (
+            <div className="mt-3 flex flex-col gap-1">
+              {Object.entries(budgetSettings.categoryLimits).map(([category, value]) => (
+                <div key={category} className="flex items-center justify-between rounded-lg border border-border/40 px-3 py-2 text-xs">
+                  <span>{CATEGORY_LABELS[category as TransactionCategory]}: R$ {(value || 0).toFixed(2)}</span>
+                  <button
+                    onClick={() => {
+                      removeCategoryBudgetLimit(category as TransactionCategory)
+                      refreshData()
+                    }}
+                    className="text-vanessa-danger"
+                  >
+                    remover
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
 
       <section className="flex flex-col gap-3">
         <div className="flex items-center gap-2">
