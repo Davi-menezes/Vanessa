@@ -80,6 +80,10 @@ export function InsightsView() {
   const handleGeneratePDF = async () => {
     const { jsPDF } = await import('jspdf')
     const doc = new jsPDF()
+    const margin = 14
+    const pageHeight = doc.internal.pageSize.getHeight()
+    const pageWidth = doc.internal.pageSize.getWidth()
+    const contentWidth = pageWidth - margin * 2
 
     doc.setFillColor(14, 20, 44)
     doc.rect(0, 0, 210, 38, 'F')
@@ -101,19 +105,21 @@ export function InsightsView() {
     doc.setFontSize(10)
 
     let y = 98
-    const maxRows = Math.min(transactions.length, 28)
-    for (let i = 0; i < maxRows; i += 1) {
+    for (let i = 0; i < transactions.length; i += 1) {
       const tx = transactions[i]
       const sign = tx.type === 'entrada' ? '+' : '-'
       const adviceFlag = tx.excludeFromSavingsAdvice ? ' [mensalidade]' : ''
-      const line = `${new Date(tx.timestamp).toLocaleDateString('pt-BR')} | ${tx.description.slice(0, 22)}${adviceFlag} | ${tx.paymentMethod === 'credito' ? 'Credito' : 'Conta'} | ${sign}R$ ${tx.value.toFixed(2)}`
-      doc.text(line, 14, y)
-      y += 6
-      if (y > 280) break
-    }
+      const line = `${new Date(tx.timestamp).toLocaleDateString('pt-BR')} | ${tx.description}${adviceFlag} | ${tx.paymentMethod === 'credito' ? 'Credito' : 'Conta corrente'} | ${sign}R$ ${tx.value.toFixed(2)} | ${CATEGORY_LABELS[tx.category]}`
+      const wrappedLines = doc.splitTextToSize(line, contentWidth)
+      const blockHeight = wrappedLines.length * 5 + 2
 
-    if (transactions.length > maxRows) {
-      doc.text(`... e mais ${transactions.length - maxRows} transacoes`, 14, Math.min(y + 2, 286))
+      if (y + blockHeight > pageHeight - 12) {
+        doc.addPage()
+        y = 20
+      }
+
+      doc.text(wrappedLines, margin, y)
+      y += blockHeight
     }
 
     doc.save(`vanessa-relatorio-${new Date().toISOString().slice(0, 10)}.pdf`)
