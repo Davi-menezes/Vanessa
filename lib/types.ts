@@ -34,6 +34,7 @@ export interface Transaction {
   category: TransactionCategory
   type: TransactionType
   paymentMethod: PaymentMethod
+  excludeFromSavingsAdvice?: boolean
   description: string
   moodId: string | null
   mood: MoodType | null

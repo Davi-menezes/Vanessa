@@ -7,6 +7,7 @@ import { Plus, FileText, Trash2, ReceiptText } from 'lucide-react'
 import { TransactionList } from './transaction-list'
 import { getHiddenExpensesTransactionIds, getMonthlyBalance, hideExpensesTransactionNotification } from '@/lib/store'
 import type { Transaction, TransactionCategory } from '@/lib/types'
+import { CATEGORY_LABELS } from '@/lib/types'
 import { Input } from '@/components/ui/input'
 
 interface TransactionsViewProps {
@@ -69,6 +70,7 @@ export function TransactionsView({ transactions, onAddNew, onClearHistory, onImp
   const inputRef = useRef<HTMLInputElement | null>(null)
   const invoiceInputRef = useRef<HTMLInputElement | null>(null)
   const [hiddenIds, setHiddenIds] = useState<string[]>(getHiddenExpensesTransactionIds())
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<'all' | TransactionCategory>('all')
   const [infoModalMessage, setInfoModalMessage] = useState<string | null>(null)
   const [showManualInvoiceModal, setShowManualInvoiceModal] = useState(false)
   const [manualInvoiceFileName, setManualInvoiceFileName] = useState('')
@@ -140,6 +142,11 @@ export function TransactionsView({ transactions, onAddNew, onClearHistory, onImp
     setManualInvoiceFileName('')
   }
 
+  const filteredTransactions = transactions.filter(tx =>
+    selectedCategoryFilter === 'all' ? true : tx.category === selectedCategoryFilter
+  )
+  const filteredExpenses = filteredTransactions.filter(t => t.type === 'saida' && !t.sleeping).reduce((sum, t) => sum + t.value, 0)
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -207,17 +214,45 @@ export function TransactionsView({ transactions, onAddNew, onClearHistory, onImp
       {/* Quick stats */}
       <div className="flex gap-3">
         <div className="flex-1 rounded-xl border border-border/50 bg-secondary/20 px-3 py-3">
-          <p className="text-[10px] text-muted-foreground">Este mes</p>
-          <p className="text-lg font-bold text-vanessa-danger">-R$ {balance.expenses.toFixed(2)}</p>
+          <p className="text-[10px] text-muted-foreground">
+            {selectedCategoryFilter === 'all' ? 'Este mes' : `Filtro: ${CATEGORY_LABELS[selectedCategoryFilter]}`}
+          </p>
+          <p className="text-lg font-bold text-vanessa-danger">-R$ {(selectedCategoryFilter === 'all' ? balance.expenses : filteredExpenses).toFixed(2)}</p>
         </div>
         <div className="flex-1 rounded-xl border border-border/50 bg-secondary/20 px-3 py-3">
           <p className="text-[10px] text-muted-foreground">Transacoes</p>
-          <p className="text-lg font-bold text-foreground">{transactions.filter(t => !t.sleeping).length}</p>
+          <p className="text-lg font-bold text-foreground">{filteredTransactions.filter(t => !t.sleeping).length}</p>
         </div>
       </div>
 
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        <button
+          onClick={() => setSelectedCategoryFilter('all')}
+          className={`rounded-full border px-3 py-1.5 text-xs whitespace-nowrap ${
+            selectedCategoryFilter === 'all'
+              ? 'border-vanessa-lavender/50 bg-vanessa-lavender/15 text-vanessa-lavender'
+              : 'border-border text-muted-foreground'
+          }`}
+        >
+          Todas
+        </button>
+        {(Object.keys(CATEGORY_LABELS) as TransactionCategory[]).map(category => (
+          <button
+            key={category}
+            onClick={() => setSelectedCategoryFilter(category)}
+            className={`rounded-full border px-3 py-1.5 text-xs whitespace-nowrap ${
+              selectedCategoryFilter === category
+                ? 'border-vanessa-lavender/50 bg-vanessa-lavender/15 text-vanessa-lavender'
+                : 'border-border text-muted-foreground'
+            }`}
+          >
+            {CATEGORY_LABELS[category]}
+          </button>
+        ))}
+      </div>
+
       <TransactionList
-        transactions={transactions}
+        transactions={filteredTransactions}
         hiddenIds={hiddenIds}
         onHideNotification={(id) => {
           hideExpensesTransactionNotification(id)

@@ -94,6 +94,7 @@ export default function VanessaApp() {
     type: TransactionType
     paymentMethod: PaymentMethod
     description: string
+    excludeFromSavingsAdvice: boolean
   }) => {
     const latestMood = getLatestMood()
     addTransaction({
@@ -116,6 +117,7 @@ export default function VanessaApp() {
       type: 'saida',
       paymentMethod: 'conta_corrente',
       description: data.description,
+      excludeFromSavingsAdvice: false,
       moodId: latestMood?.id || null,
       mood: latestMood?.mood || null,
       timestamp: new Date().toISOString(),
@@ -196,6 +198,7 @@ export default function VanessaApp() {
                       type: 'saida',
                       paymentMethod: 'conta_corrente',
                       description: item.description,
+                      excludeFromSavingsAdvice: false,
                       moodId: latestMood?.id || null,
                       mood: latestMood?.mood || null,
                       timestamp: new Date().toISOString(),

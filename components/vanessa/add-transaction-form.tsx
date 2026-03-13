@@ -10,7 +10,7 @@ import type { PaymentMethod, TransactionCategory, TransactionType } from '@/lib/
 import { CATEGORY_LABELS } from '@/lib/types'
 
 interface AddTransactionFormProps {
-  onAdd: (data: { value: number; category: TransactionCategory; type: TransactionType; paymentMethod: PaymentMethod; description: string }) => void
+  onAdd: (data: { value: number; category: TransactionCategory; type: TransactionType; paymentMethod: PaymentMethod; description: string; excludeFromSavingsAdvice: boolean }) => void
   onClose: () => void
 }
 
@@ -23,6 +23,7 @@ export function AddTransactionForm({ onAdd, onClose }: AddTransactionFormProps) 
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('conta_corrente')
   const [description, setDescription] = useState('')
   const [incomeKind, setIncomeKind] = useState<'salario' | 'outro'>('salario')
+  const [isEducationTuition, setIsEducationTuition] = useState(false)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -45,7 +46,14 @@ export function AddTransactionForm({ onAdd, onClose }: AddTransactionFormProps) 
         : category
 
     const finalPaymentMethod: PaymentMethod = type === 'entrada' ? 'conta_corrente' : paymentMethod
-    onAdd({ value: numValue, category: finalCategory, type, paymentMethod: finalPaymentMethod, description: finalDescription })
+    onAdd({
+      value: numValue,
+      category: finalCategory,
+      type,
+      paymentMethod: finalPaymentMethod,
+      description: finalDescription,
+      excludeFromSavingsAdvice: type === 'saida' && finalCategory === 'educacao' && isEducationTuition,
+    })
   }
 
   return (
@@ -77,6 +85,7 @@ export function AddTransactionForm({ onAdd, onClose }: AddTransactionFormProps) 
               onClick={() => {
                 setType('saida')
                 setIncomeKind('salario')
+                setIsEducationTuition(false)
               }}
               className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${type === 'saida' ? 'bg-vanessa-danger/20 text-vanessa-danger' : 'text-muted-foreground'}`}
             >
@@ -84,7 +93,10 @@ export function AddTransactionForm({ onAdd, onClose }: AddTransactionFormProps) 
             </button>
             <button
               type="button"
-              onClick={() => setType('entrada')}
+              onClick={() => {
+                setType('entrada')
+                setIsEducationTuition(false)
+              }}
               className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${type === 'entrada' ? 'bg-vanessa-success/20 text-vanessa-success' : 'text-muted-foreground'}`}
             >
               Entrada
@@ -185,7 +197,10 @@ export function AddTransactionForm({ onAdd, onClose }: AddTransactionFormProps) 
                   key={cat}
                   type="button"
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setCategory(cat)}
+                  onClick={() => {
+                    setCategory(cat)
+                    if (cat !== 'educacao') setIsEducationTuition(false)
+                  }}
                   className={`rounded-lg border px-2 py-2 text-[11px] transition-colors ${
                     category === cat
                       ? 'border-vanessa-lavender/50 bg-vanessa-lavender/15 text-vanessa-lavender'
@@ -197,6 +212,37 @@ export function AddTransactionForm({ onAdd, onClose }: AddTransactionFormProps) 
               ))}
             </div>
           </div>
+
+          {type === 'saida' && category === 'educacao' && (
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-xs text-muted-foreground">Esse gasto e mensalidade?</Label>
+              <div className="flex gap-2 rounded-xl bg-secondary/40 p-1">
+                <button
+                  type="button"
+                  onClick={() => setIsEducationTuition(true)}
+                  className={`flex-1 rounded-lg py-2 text-xs font-medium ${
+                    isEducationTuition ? 'bg-vanessa-calm/20 text-vanessa-calm' : 'text-muted-foreground'
+                  }`}
+                >
+                  Sim, mensalidade
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsEducationTuition(false)}
+                  className={`flex-1 rounded-lg py-2 text-xs font-medium ${
+                    !isEducationTuition ? 'bg-vanessa-lavender/20 text-vanessa-lavender' : 'text-muted-foreground'
+                  }`}
+                >
+                  Nao, gasto variavel
+                </button>
+              </div>
+              {isEducationTuition && (
+                <p className="text-[11px] text-muted-foreground">
+                  Mensalidade nao entra nas sugestoes de "gastar menos" do Insights.
+                </p>
+              )}
+            </div>
+          )}
 
           <Button
             type="submit"

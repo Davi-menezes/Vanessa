@@ -176,6 +176,7 @@ export function getTransactions(): Transaction[] {
   return parsed.map(tx => ({
     ...tx,
     paymentMethod: tx.paymentMethod || (tx.type === 'entrada' ? 'conta_corrente' : 'conta_corrente'),
+    excludeFromSavingsAdvice: tx.excludeFromSavingsAdvice || false,
   }))
 }
 
@@ -505,6 +506,10 @@ function getCurrentMonthExpenseTransactions(): Transaction[] {
   })
 }
 
+function getCurrentMonthAdviceExpenseTransactions(): Transaction[] {
+  return getCurrentMonthExpenseTransactions().filter(tx => !tx.excludeFromSavingsAdvice)
+}
+
 export function getCurrentMonthCategoryTotals(): Array<{ category: TransactionCategory; total: number }> {
   const txs = getCurrentMonthExpenseTransactions()
   const map = new Map<TransactionCategory, number>()
@@ -522,14 +527,20 @@ export function getSpendingControlSnapshot(): {
   overCategoryLimits: Array<{ category: TransactionCategory; total: number; limit: number }>
 } {
   const settings = getBudgetSettings()
-  const categoryTotals = getCurrentMonthCategoryTotals()
-  const totalSpent = categoryTotals.reduce((sum, item) => sum + item.total, 0)
-  const topCategory = [...categoryTotals].sort((a, b) => b.total - a.total)[0] || null
+  const allCategoryTotals = getCurrentMonthCategoryTotals()
+  const adviceTxs = getCurrentMonthAdviceExpenseTransactions()
+  const adviceMap = new Map<TransactionCategory, number>()
+  for (const tx of adviceTxs) {
+    adviceMap.set(tx.category, (adviceMap.get(tx.category) || 0) + tx.value)
+  }
+  const adviceCategoryTotals = Array.from(adviceMap.entries()).map(([category, total]) => ({ category, total }))
+  const totalSpent = allCategoryTotals.reduce((sum, item) => sum + item.total, 0)
+  const topCategory = [...adviceCategoryTotals].sort((a, b) => b.total - a.total)[0] || null
   const monthlyUsagePercent = settings.monthlyLimit && settings.monthlyLimit > 0
     ? Math.round((totalSpent / settings.monthlyLimit) * 100)
     : null
 
-  const overCategoryLimits = categoryTotals
+  const overCategoryLimits = adviceCategoryTotals
     .filter(item => {
       const limit = settings.categoryLimits[item.category]
       return typeof limit === 'number' && limit > 0 && item.total > limit
@@ -599,6 +610,7 @@ export function markFixedCostAsPaid(fixedCostId: string, valueOverride?: number)
     category: normalizeFixedCategory(fixedCost.category),
     type: 'saida',
     paymentMethod: 'conta_corrente',
+    excludeFromSavingsAdvice: false,
     description: `Gasto fixo pago: ${fixedCost.name}`,
     moodId: null,
     mood: null,
