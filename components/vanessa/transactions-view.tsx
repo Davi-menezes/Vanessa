@@ -71,6 +71,7 @@ export function TransactionsView({ transactions, onAddNew, onClearHistory, onImp
   const invoiceInputRef = useRef<HTMLInputElement | null>(null)
   const [hiddenIds, setHiddenIds] = useState<string[]>(getHiddenExpensesTransactionIds())
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<'all' | TransactionCategory>('all')
+  const [searchTerm, setSearchTerm] = useState('')
   const [infoModalMessage, setInfoModalMessage] = useState<string | null>(null)
   const [showManualInvoiceModal, setShowManualInvoiceModal] = useState(false)
   const [manualInvoiceFileName, setManualInvoiceFileName] = useState('')
@@ -142,9 +143,23 @@ export function TransactionsView({ transactions, onAddNew, onClearHistory, onImp
     setManualInvoiceFileName('')
   }
 
-  const filteredTransactions = transactions.filter(tx =>
-    selectedCategoryFilter === 'all' ? true : tx.category === selectedCategoryFilter
-  )
+  const normalizedSearch = searchTerm.trim().toLowerCase()
+  const searchAsNumber = Number(normalizedSearch.replace(',', '.'))
+  const hasNumericSearch = normalizedSearch.length > 0 && Number.isFinite(searchAsNumber)
+
+  const filteredTransactions = transactions.filter(tx => {
+    const matchesCategory = selectedCategoryFilter === 'all' ? true : tx.category === selectedCategoryFilter
+    if (!matchesCategory) return false
+    if (!normalizedSearch) return true
+
+    const descriptionMatch = tx.description.toLowerCase().includes(normalizedSearch)
+    const valueAsText = tx.value.toFixed(2)
+    const valueAsTextBr = valueAsText.replace('.', ',')
+    const valueTextMatch = valueAsText.includes(normalizedSearch) || valueAsTextBr.includes(normalizedSearch)
+    const valueNumberMatch = hasNumericSearch ? Math.abs(tx.value - searchAsNumber) < 0.01 : false
+
+    return descriptionMatch || valueTextMatch || valueNumberMatch
+  })
   const filteredExpenses = filteredTransactions.filter(t => t.type === 'saida' && !t.sleeping).reduce((sum, t) => sum + t.value, 0)
 
   return (
@@ -250,6 +265,13 @@ export function TransactionsView({ transactions, onAddNew, onClearHistory, onImp
           </button>
         ))}
       </div>
+
+      <Input
+        value={searchTerm}
+        onChange={e => setSearchTerm(e.target.value)}
+        placeholder="Pesquisar por descricao ou valor (ex: mercado, 45,90)"
+        className="border-border bg-secondary/30"
+      />
 
       <TransactionList
         transactions={filteredTransactions}
