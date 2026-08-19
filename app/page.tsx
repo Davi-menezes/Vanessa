@@ -2,16 +2,17 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { AnimatePresence } from 'framer-motion'
-import { AuthScreen } from '@/components/vanessa/auth-screen'
-import { MoodCheckin } from '@/components/vanessa/mood-checkin'
-import { ImpulsivityAlert } from '@/components/vanessa/impulsivity-alert'
-import { AudioInput } from '@/components/vanessa/audio-input'
-import { HomeView } from '@/components/vanessa/home-view'
-import { TransactionsView } from '@/components/vanessa/transactions-view'
-import { InsightsView } from '@/components/vanessa/insights-view'
-import { PlanningView } from '@/components/vanessa/planning-view'
-import { AddTransactionForm } from '@/components/vanessa/add-transaction-form'
-import { BottomNav } from '@/components/vanessa/bottom-nav'
+import { AuthScreen } from '@/components/mdmr/auth-screen'
+import { MoodCheckin } from '@/components/mdmr/mood-checkin'
+import { ImpulsivityAlert } from '@/components/mdmr/impulsivity-alert'
+import { AudioInput } from '@/components/mdmr/audio-input'
+import { HomeView } from '@/components/mdmr/home-view'
+import { TransactionsView } from '@/components/mdmr/transactions-view'
+import { InsightsView } from '@/components/mdmr/insights-view'
+import { PlanningView } from '@/components/mdmr/planning-view'
+import { AddTransactionForm } from '@/components/mdmr/add-transaction-form'
+import { BottomNav } from '@/components/mdmr/bottom-nav'
+import { Sidebar } from '@/components/mdmr/sidebar'
 import {
   addMood,
   getLatestMood,
@@ -27,7 +28,7 @@ import type { MoodType, PaymentMethod, TransactionCategory, TransactionType, Use
 
 type Tab = 'home' | 'transacoes' | 'insights' | 'planejamento'
 
-export default function VanessaApp() {
+export default function mdmrApp() {
   const [user, setUser] = useState<User | null>(null)
   const [authChecked, setAuthChecked] = useState(false)
   const [activeTab, setActiveTab] = useState<Tab>('home')
@@ -37,6 +38,14 @@ export default function VanessaApp() {
   const [currentMood, setCurrentMood] = useState<MoodType | null>(null)
   const [transactions, setTransactions] = useState<ReturnType<typeof getTransactions>>([])
   const [refreshKey, setRefreshKey] = useState(0)
+  const [isMobile, setIsMobile] = useState(true)
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   // Check for existing session on mount
   useEffect(() => {
@@ -141,8 +150,8 @@ export default function VanessaApp() {
     return <AuthScreen onAuth={handleAuth} />
   }
 
-  return (
-    <main className="relative mx-auto min-h-screen max-w-md bg-background">
+  const renderContent = () => (
+    <>
       {/* Mood check-in overlay */}
       <AnimatePresence>
         {showMoodCheckin && (
@@ -228,10 +237,34 @@ export default function VanessaApp() {
             )}
           </AnimatePresence>
 
-          {/* Bottom navigation */}
-          <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+          {/* Bottom navigation - mobile only */}
+          {isMobile && <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />}
         </>
       )}
-    </main>
+    </>
+  )
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Sidebar - desktop only */}
+      {!isMobile && (
+        <Sidebar
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          onLogout={handleLogout}
+          userName={user.name}
+        />
+      )}
+
+      {/* Main content area */}
+      <main className={`
+        min-h-screen bg-background transition-all duration-300
+        ${isMobile ? 'w-full' : 'lg:ml-64 lg:w-[calc(100%-16rem)]'}
+      `}>
+        <div className={isMobile ? 'max-w-md mx-auto' : 'max-w-4xl mx-auto p-8'}>
+          {renderContent()}
+        </div>
+      </main>
+    </div>
   )
 }

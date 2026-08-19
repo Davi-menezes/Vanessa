@@ -1,0 +1,60 @@
+CREATE TABLE Mood (
+    id TEXT NOT NULL PRIMARY KEY,
+    mood TEXT NOT NULL,
+    timestampEpoch INTEGER NOT NULL
+);
+
+CREATE TABLE Transaction (
+    id TEXT NOT NULL PRIMARY KEY,
+    value REAL NOT NULL,
+    category TEXT NOT NULL,
+    type TEXT NOT NULL,
+    paymentMethod TEXT NOT NULL,
+    description TEXT NOT NULL,
+    moodId TEXT,
+    mood TEXT,
+    timestampEpoch INTEGER NOT NULL,
+    sleeping INTEGER NOT NULL DEFAULT 0,
+    sleepUntilEpoch INTEGER,
+    excludeFromSavingsAdvice INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE HiddenNotification (
+    transactionId TEXT NOT NULL,
+    scope TEXT NOT NULL,
+    PRIMARY KEY (transactionId, scope)
+);
+
+CREATE TABLE PiggyBank (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    savedAmount REAL NOT NULL,
+    targetAmount REAL NOT NULL,
+    createdAtEpoch INTEGER NOT NULL
+);
+
+CREATE TABLE PlanningGoal (
+    id TEXT NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    type TEXT NOT NULL,
+    targetAmount REAL NOT NULL,
+    targetMonths INTEGER NOT NULL,
+    createdAtEpoch INTEGER NOT NULL
+);
+
+CREATE TABLE FixedCost (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    amount REAL NOT NULL,
+    dueDay INTEGER NOT NULL,
+    category TEXT NOT NULL,
+    createdAtEpoch INTEGER NOT NULL,
+    paidMonthsJson TEXT NOT NULL DEFAULT '{}'
+);
+
+CREATE TABLE BudgetSettings (
+    id INTEGER NOT NULL PRIMARY KEY CHECK (id = 1),
+    monthlyLimit REAL,
+    categoryLimitsJson TEXT NOT NULL DEFAULT '{}',
+    updatedAtEpoch INTEGER NOT NULL
+);

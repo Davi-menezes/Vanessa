@@ -1,0 +1,8 @@
+addHidden:
+INSERT OR IGNORE INTO HiddenNotification(transactionId, scope) VALUES (?, ?);
+
+removeHidden:
+DELETE FROM HiddenNotification WHERE transactionId = ? AND scope = ?;
+
+selectAllHidden:
+SELECT transactionId, scope FROM HiddenNotification;

@@ -1,0 +1,8 @@
+selectAll:
+SELECT * FROM PlanningGoal ORDER BY createdAtEpoch DESC;
+
+insert:
+INSERT INTO PlanningGoal(id, title, type, targetAmount, targetMonths, createdAtEpoch) VALUES (?, ?, ?, ?, ?, ?);
+
+delete:
+DELETE FROM PlanningGoal WHERE id = ?;

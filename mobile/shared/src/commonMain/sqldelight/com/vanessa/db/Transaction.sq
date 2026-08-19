@@ -1,0 +1,21 @@
+selectAllTransactions:
+SELECT * FROM Transaction ORDER BY timestampEpoch DESC;
+
+selectTransactionsByMonth:
+SELECT * FROM Transaction
+WHERE timestampEpoch >= ? AND timestampEpoch < ?
+ORDER BY timestampEpoch DESC;
+
+insertTransaction:
+INSERT INTO Transaction(id, value, category, type, paymentMethod, description, moodId, mood, timestampEpoch, sleeping, sleepUntilEpoch, excludeFromSavingsAdvice)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+updateTransactionSleeping:
+UPDATE Transaction SET sleeping = ?, sleepUntilEpoch = ? WHERE id = ?;
+
+deleteTransaction:
+DELETE FROM Transaction WHERE id = ?;
+
+clearAllTransactions:
+DELETE FROM Transaction;
+DELETE FROM HiddenNotification;

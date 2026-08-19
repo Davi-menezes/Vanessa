@@ -1,0 +1,11 @@
+selectMood:
+SELECT * FROM Mood ORDER BY timestampEpoch DESC;
+
+selectLatestMood:
+SELECT * FROM Mood ORDER BY timestampEpoch DESC LIMIT 1;
+
+insertMood:
+INSERT INTO Mood(id, mood, timestampEpoch) VALUES (?, ?, ?);
+
+clearMoods:
+DELETE FROM Mood;

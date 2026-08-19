@@ -2,8 +2,8 @@
 
 import type { MoodEntry, Transaction, MoodType, TransactionCategory, User, PiggyBank, PlanningGoal, FixedCost, BudgetSettings } from './types'
 
-const USERS_KEY = 'vanessa_users'
-const SESSION_KEY = 'vanessa_session'
+const USERS_KEY = 'mdmr_users'
+const SESSION_KEY = 'mdmr_session'
 
 function generateId() {
   return Math.random().toString(36).substring(2, 15) + Date.now().toString(36)
@@ -94,47 +94,47 @@ export function getCurrentUser(): User | null {
 // --- Helpers for per-user data ---
 function getUserMoodsKey(): string {
   const user = getCurrentUser()
-  return user ? `vanessa_moods_${user.id}` : 'vanessa_moods'
+  return user ? `mdmr_moods_${user.id}` : 'mdmr_moods'
 }
 
 function getUserTransactionsKey(): string {
   const user = getCurrentUser()
-  return user ? `vanessa_transactions_${user.id}` : 'vanessa_transactions'
+  return user ? `mdmr_transactions_${user.id}` : 'mdmr_transactions'
 }
 
 function getUserHomeHiddenNotificationsKey(): string {
   const user = getCurrentUser()
-  return user ? `vanessa_home_hidden_notifications_${user.id}` : 'vanessa_home_hidden_notifications'
+  return user ? `mdmr_home_hidden_notifications_${user.id}` : 'mdmr_home_hidden_notifications'
 }
 
 function getUserExpensesHiddenNotificationsKey(): string {
   const user = getCurrentUser()
-  return user ? `vanessa_expenses_hidden_notifications_${user.id}` : 'vanessa_expenses_hidden_notifications'
+  return user ? `mdmr_expenses_hidden_notifications_${user.id}` : 'mdmr_expenses_hidden_notifications'
 }
 
 function getUserPiggyBanksKey(): string {
   const user = getCurrentUser()
-  return user ? `vanessa_piggy_banks_${user.id}` : 'vanessa_piggy_banks'
+  return user ? `mdmr_piggy_banks_${user.id}` : 'mdmr_piggy_banks'
 }
 
 function getUserPlanningGoalsKey(): string {
   const user = getCurrentUser()
-  return user ? `vanessa_planning_goals_${user.id}` : 'vanessa_planning_goals'
+  return user ? `mdmr_planning_goals_${user.id}` : 'mdmr_planning_goals'
 }
 
 function getUserFixedCostsKey(): string {
   const user = getCurrentUser()
-  return user ? `vanessa_fixed_costs_${user.id}` : 'vanessa_fixed_costs'
+  return user ? `mdmr_fixed_costs_${user.id}` : 'mdmr_fixed_costs'
 }
 
 function getUserFixedCostsPaidKey(): string {
   const user = getCurrentUser()
-  return user ? `vanessa_fixed_costs_paid_${user.id}` : 'vanessa_fixed_costs_paid'
+  return user ? `mdmr_fixed_costs_paid_${user.id}` : 'mdmr_fixed_costs_paid'
 }
 
 function getUserBudgetSettingsKey(): string {
   const user = getCurrentUser()
-  return user ? `vanessa_budget_settings_${user.id}` : 'vanessa_budget_settings'
+  return user ? `mdmr_budget_settings_${user.id}` : 'mdmr_budget_settings'
 }
 
 // --- Moods ---

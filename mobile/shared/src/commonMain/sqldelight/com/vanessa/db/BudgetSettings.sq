@@ -1,0 +1,5 @@
+selectAll:
+SELECT * FROM BudgetSettings LIMIT 1;
+
+upsert:
+INSERT OR REPLACE INTO BudgetSettings(id, monthlyLimit, categoryLimitsJson, updatedAtEpoch) VALUES (1, ?, ?, ?);

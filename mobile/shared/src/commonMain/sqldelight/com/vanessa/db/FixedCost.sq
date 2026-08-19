@@ -1,0 +1,11 @@
+selectAll:
+SELECT * FROM FixedCost ORDER BY dueDay ASC;
+
+insert:
+INSERT INTO FixedCost(id, name, amount, dueDay, category, createdAtEpoch, paidMonthsJson) VALUES (?, ?, ?, ?, ?, ?, ?);
+
+update:
+UPDATE FixedCost SET name = ?, amount = ?, dueDay = ?, category = ?, paidMonthsJson = ? WHERE id = ?;
+
+delete:
+DELETE FROM FixedCost WHERE id = ?;

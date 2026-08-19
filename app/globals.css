@@ -3,7 +3,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Vanessa - Dark Zen Theme */
+/* mdmr - Dark Zen Theme */
 /* Deep blues and lavender for stress reduction */
 :root {
   --background: oklch(0.13 0.02 260);
@@ -40,7 +40,7 @@
   --sidebar-border: oklch(0.25 0.03 260);
   --sidebar-ring: oklch(0.65 0.12 280);
 
-  /* Custom Vanessa tokens */
+  /* Custom mdmr tokens */
   --vanessa-calm: oklch(0.6 0.1 220);
   --vanessa-warning: oklch(0.7 0.18 60);
   --vanessa-danger: oklch(0.6 0.2 25);

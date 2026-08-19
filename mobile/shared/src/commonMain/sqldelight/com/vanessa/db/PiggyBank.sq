@@ -1,0 +1,11 @@
+selectAll:
+SELECT * FROM PiggyBank ORDER BY createdAtEpoch DESC;
+
+insert:
+INSERT INTO PiggyBank(id, name, savedAmount, targetAmount, createdAtEpoch) VALUES (?, ?, ?, ?, ?);
+
+update:
+UPDATE PiggyBank SET name = ?, savedAmount = ?, targetAmount = ? WHERE id = ?;
+
+delete:
+DELETE FROM PiggyBank WHERE id = ?;

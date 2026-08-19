@@ -1,0 +1,9 @@
+# No thanks
+gradle/
+.kotlin/
+build/
+.idea/
+.DS_Store
+*.xcuserstate
+iosApp/Pods/
+iosApp/build/

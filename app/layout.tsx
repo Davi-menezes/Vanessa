@@ -14,13 +14,13 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Vanessa - Assistente Financeiro Comportamental',
+  title: 'mdmr - Assistente Financeiro Comportamental',
   description: 'Sua assistente de saude mental e controle de gastos. Entenda a relacao entre suas emocoes e seu dinheiro.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Vanessa',
+    title: 'mdmr',
   },
   icons: {
     icon: '/icon-192.png',

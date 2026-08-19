@@ -1,6 +1,6 @@
 {
-  "name": "Vanessa - Assistente Financeiro",
-  "short_name": "Vanessa",
+  "name": "mdmr - Assistente Financeiro",
+  "short_name": "mdmr",
   "description": "Assistente financeiro comportamental focado em saude mental e controle de gastos.",
   "start_url": "/",
   "display": "standalone",
