@@ -1,0 +1,128 @@
+{
+  "" : {
+    "diagnostics" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/mdmr-master.dia",
+    "emit-module-dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/mdmr-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/mdmr-master-emit-module.dia",
+    "swift-dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/mdmr-master.swiftdeps"
+  },
+  "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/GeneratedAssetSymbols.dia",
+    "index-unit-output-path" : "/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftdeps",
+    "swiftmodule" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/GeneratedAssetSymbols~partial.swiftmodule"
+  },
+  "/Users/adm/Documents/Vanessa/vanessa-native/iosApp/Sources/AppHost.swift" : {
+    "const-values" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/AppHost.swiftconstvalues",
+    "dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/AppHost.d",
+    "diagnostics" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/AppHost.dia",
+    "index-unit-output-path" : "/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/AppHost.o",
+    "llvm-bc" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/AppHost.bc",
+    "object" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/AppHost.o",
+    "swift-dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/AppHost.swiftdeps",
+    "swiftmodule" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/AppHost~partial.swiftmodule"
+  },
+  "/Users/adm/Documents/Vanessa/vanessa-native/iosApp/Sources/AuthView.swift" : {
+    "const-values" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/AuthView.swiftconstvalues",
+    "dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/AuthView.d",
+    "diagnostics" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/AuthView.dia",
+    "index-unit-output-path" : "/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/AuthView.o",
+    "llvm-bc" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/AuthView.bc",
+    "object" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/AuthView.o",
+    "swift-dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/AuthView.swiftdeps",
+    "swiftmodule" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/AuthView~partial.swiftmodule"
+  },
+  "/Users/adm/Documents/Vanessa/vanessa-native/iosApp/Sources/ContentView.swift" : {
+    "const-values" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/ContentView.swiftconstvalues",
+    "dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/ContentView.d",
+    "diagnostics" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/ContentView.dia",
+    "index-unit-output-path" : "/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/ContentView.o",
+    "llvm-bc" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/ContentView.bc",
+    "object" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/ContentView.o",
+    "swift-dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/ContentView.swiftdeps",
+    "swiftmodule" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/ContentView~partial.swiftmodule"
+  },
+  "/Users/adm/Documents/Vanessa/vanessa-native/iosApp/Sources/Helpers.swift" : {
+    "const-values" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/Helpers.swiftconstvalues",
+    "dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/Helpers.d",
+    "diagnostics" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/Helpers.dia",
+    "index-unit-output-path" : "/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/Helpers.o",
+    "llvm-bc" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/Helpers.bc",
+    "object" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/Helpers.o",
+    "swift-dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/Helpers.swiftdeps",
+    "swiftmodule" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/Helpers~partial.swiftmodule"
+  },
+  "/Users/adm/Documents/Vanessa/vanessa-native/iosApp/Sources/HomeView.swift" : {
+    "const-values" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/HomeView.swiftconstvalues",
+    "dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/HomeView.d",
+    "diagnostics" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/HomeView.dia",
+    "index-unit-output-path" : "/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/HomeView.o",
+    "llvm-bc" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/HomeView.bc",
+    "object" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/HomeView.o",
+    "swift-dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/HomeView.swiftdeps",
+    "swiftmodule" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/HomeView~partial.swiftmodule"
+  },
+  "/Users/adm/Documents/Vanessa/vanessa-native/iosApp/Sources/InsightsView.swift" : {
+    "const-values" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/InsightsView.swiftconstvalues",
+    "dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/InsightsView.d",
+    "diagnostics" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/InsightsView.dia",
+    "index-unit-output-path" : "/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/InsightsView.o",
+    "llvm-bc" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/InsightsView.bc",
+    "object" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/InsightsView.o",
+    "swift-dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/InsightsView.swiftdeps",
+    "swiftmodule" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/InsightsView~partial.swiftmodule"
+  },
+  "/Users/adm/Documents/Vanessa/vanessa-native/iosApp/Sources/PlanningView.swift" : {
+    "const-values" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/PlanningView.swiftconstvalues",
+    "dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/PlanningView.d",
+    "diagnostics" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/PlanningView.dia",
+    "index-unit-output-path" : "/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/PlanningView.o",
+    "llvm-bc" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/PlanningView.bc",
+    "object" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/PlanningView.o",
+    "swift-dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/PlanningView.swiftdeps",
+    "swiftmodule" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/PlanningView~partial.swiftmodule"
+  },
+  "/Users/adm/Documents/Vanessa/vanessa-native/iosApp/Sources/TransactionsView.swift" : {
+    "const-values" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/TransactionsView.swiftconstvalues",
+    "dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/TransactionsView.d",
+    "diagnostics" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/TransactionsView.dia",
+    "index-unit-output-path" : "/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/TransactionsView.o",
+    "llvm-bc" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/TransactionsView.bc",
+    "object" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/TransactionsView.o",
+    "swift-dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/TransactionsView.swiftdeps",
+    "swiftmodule" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/TransactionsView~partial.swiftmodule"
+  },
+  "/Users/adm/Documents/Vanessa/vanessa-native/iosApp/Sources/WelcomeView.swift" : {
+    "const-values" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/WelcomeView.swiftconstvalues",
+    "dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/WelcomeView.d",
+    "diagnostics" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/WelcomeView.dia",
+    "index-unit-output-path" : "/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/WelcomeView.o",
+    "llvm-bc" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/WelcomeView.bc",
+    "object" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/WelcomeView.o",
+    "swift-dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/WelcomeView.swiftdeps",
+    "swiftmodule" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/WelcomeView~partial.swiftmodule"
+  },
+  "/Users/adm/Documents/Vanessa/vanessa-native/iosApp/Sources/mdmrApp.swift" : {
+    "const-values" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/mdmrApp.swiftconstvalues",
+    "dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/mdmrApp.d",
+    "diagnostics" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/mdmrApp.dia",
+    "index-unit-output-path" : "/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/mdmrApp.o",
+    "llvm-bc" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/mdmrApp.bc",
+    "object" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/mdmrApp.o",
+    "swift-dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/mdmrApp.swiftdeps",
+    "swiftmodule" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/mdmrApp~partial.swiftmodule"
+  },
+  "/Users/adm/Documents/Vanessa/vanessa-native/iosApp/Sources/mdmrStore.swift" : {
+    "const-values" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/mdmrStore.swiftconstvalues",
+    "dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/mdmrStore.d",
+    "diagnostics" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/mdmrStore.dia",
+    "index-unit-output-path" : "/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/mdmrStore.o",
+    "llvm-bc" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/mdmrStore.bc",
+    "object" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/mdmrStore.o",
+    "swift-dependencies" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/mdmrStore.swiftdeps",
+    "swiftmodule" : "/Users/adm/Documents/Vanessa/vanessa-native/build/ios-device/Build/Intermediates.noindex/mdmr.build/Debug-iphoneos/mdmr.build/Objects-normal/arm64/mdmrStore~partial.swiftmodule"
+  }
+}

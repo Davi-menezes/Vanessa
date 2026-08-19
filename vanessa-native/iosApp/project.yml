@@ -1,0 +1,31 @@
+name: mdmr
+settings:
+  ORGANIZATIONNAME: com.vanessa
+  PRODUCT_BUNDLE_IDENTIFIER: com.davi.mdmr
+  SWIFT_VERSION: "5.0"
+  DEVELOPMENT_TEAM: NXYBA8A336
+targets:
+  mdmr:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Sources
+        excludes:
+          - "Info.plist"
+          - "LaunchScreen.storyboard"
+      - path: Sources/LaunchScreen.storyboard
+    info:
+      path: Sources/Info.plist
+      properties:
+        UILaunchStoryboardName: LaunchScreen
+        UIRequiresFullScreen: true
+        UIStatusBarHidden: true
+        UIViewControllerBasedStatusBarAppearance: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.davi.mdmr
+        DEVELOPMENT_TEAM: NXYBA8A336
+        CODE_SIGN_STYLE: Automatic
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon

@@ -1,0 +1,6 @@
+Target dependency graph (3 targets)
+Target 'mdmr' in project 'mdmr'
+➜ Implicit dependency on target 'Pods-mdmr' in project 'Pods' via file 'Pods_mdmr.framework' in build phase 'Link Binary'
+Target 'Pods-mdmr' in project 'Pods'
+➜ Explicit dependency on target 'shared' in project 'Pods'
+Target 'shared' in project 'Pods' (no dependencies)
