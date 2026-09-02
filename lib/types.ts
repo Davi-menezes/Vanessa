@@ -85,7 +85,7 @@ export interface BudgetSettings {
 export const MOOD_CONFIG: Record<MoodType, { label: string; icon: string; color: string; isImpulsive: boolean }> = {
   ansiedade: { label: 'Ansiedade', icon: 'brain', color: 'text-vanessa-warning', isImpulsive: true },
   tedio: { label: 'Tedio', icon: 'meh', color: 'text-muted-foreground', isImpulsive: false },
-  euforia: { label: 'Euforia', icon: 'sparkles', color: 'text-vanessa-lavender', isImpulsive: true },
+  euforia: { label: 'Euforia', icon: 'sparkles', color: 'text-vanessa-glow', isImpulsive: true },
   tristeza: { label: 'Tristeza', icon: 'cloud-rain', color: 'text-vanessa-calm', isImpulsive: false },
   calmaria: { label: 'Calmaria', icon: 'leaf', color: 'text-vanessa-success', isImpulsive: false },
 }

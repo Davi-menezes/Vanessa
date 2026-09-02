@@ -144,7 +144,7 @@ export function AuthScreen({ onAuth }: AuthScreenProps) {
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.15, type: 'spring', stiffness: 180 }}
-          className="mb-2 flex h-16 w-16 items-center justify-center rounded-2xl bg-vanessa-lavender/15 border border-vanessa-lavender/20"
+          className="glass glass-glow mb-2 flex h-16 w-16 items-center justify-center rounded-2xl"
         >
           <span className="text-2xl font-bold text-vanessa-lavender">M</span>
         </motion.div>
@@ -310,7 +310,7 @@ export function AuthScreen({ onAuth }: AuthScreenProps) {
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 28, stiffness: 280 }}
               onSubmit={handleResetPassword}
-              className="w-full rounded-t-3xl border-t border-border bg-card p-6 pb-10"
+              className="glass-strong w-full rounded-t-3xl border-t border-border/40 p-6 pb-10"
             >
               <div className="mb-5 flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-foreground">Redefinir senha</h3>

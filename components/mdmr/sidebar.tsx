@@ -37,7 +37,7 @@ export function Sidebar({ activeTab, onTabChange, onLogout, userName }: SidebarP
     <motion.aside
       initial={{ width: collapsed ? '64px' : '260px' }}
       animate={{ width: collapsed ? '64px' : '260px' }}
-      className="fixed left-0 top-0 z-40 h-screen border-r border-border/50 bg-card/95 backdrop-blur-xl transition-all duration-300 flex flex-col"
+      className="glass-strong fixed left-0 top-0 z-40 h-screen border-r border-border/40 transition-all duration-300 flex flex-col"
       role="navigation"
       aria-label="Menu principal"
     >

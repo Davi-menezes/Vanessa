@@ -285,7 +285,7 @@ export function TransactionsView({ transactions, onAddNew, onClearHistory, onImp
 
       {infoModalMessage && (
         <div className="fixed inset-0 z-50 flex items-end bg-background/70 backdrop-blur-sm">
-          <div className="w-full rounded-t-3xl border-t border-border bg-card p-5 pb-8">
+          <div className="glass-strong w-full rounded-t-3xl border-t border-border/40 p-5 pb-8">
             <p className="text-sm font-medium text-foreground">Aviso</p>
             <p className="mt-2 text-sm text-muted-foreground">{infoModalMessage}</p>
             <button
@@ -300,7 +300,7 @@ export function TransactionsView({ transactions, onAddNew, onClearHistory, onImp
 
       {showManualInvoiceModal && (
         <div className="fixed inset-0 z-50 flex items-end bg-background/70 backdrop-blur-sm">
-          <div className="w-full rounded-t-3xl border-t border-border bg-card p-5 pb-8">
+          <div className="glass-strong w-full rounded-t-3xl border-t border-border/40 p-5 pb-8">
             <p className="text-sm font-medium text-foreground">Cadastrar nota fiscal manualmente</p>
             <p className="mt-1 text-xs text-muted-foreground">{manualInvoiceFileName}</p>
             <div className="mt-4 flex flex-col gap-3">

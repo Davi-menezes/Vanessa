@@ -262,7 +262,7 @@ export function AudioInput({ onTransactionExtracted }: AudioInputProps) {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="w-full rounded-t-3xl border-t border-border bg-card p-6 pb-10"
+              className="glass-strong w-full rounded-t-3xl border-t border-border/40 p-6 pb-10"
             >
               {state === 'processing' && (
                 <div className="flex flex-col items-center gap-4 py-8">
@@ -301,7 +301,7 @@ export function AudioInput({ onTransactionExtracted }: AudioInputProps) {
                     {`"${transcription}"`}
                   </p>
 
-                  <div className="mx-auto flex w-full max-w-xs flex-col gap-3 rounded-2xl border border-border bg-secondary/50 p-4">
+                  <div className="mx-auto flex w-full max-w-xs flex-col gap-3 rounded-2xl border border-border/50 bg-secondary/40 p-4">
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-muted-foreground">Valor</span>
                       <span className="text-lg font-semibold text-foreground">

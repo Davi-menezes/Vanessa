@@ -40,7 +40,7 @@ export function ImpulsivityAlert({ show, onPause, onDismiss }: ImpulsivityAlertP
           exit={{ opacity: 0, y: -20 }}
           className="fixed inset-x-0 top-0 z-50 p-4"
         >
-          <div className="mx-auto max-w-sm overflow-hidden rounded-2xl border border-vanessa-warning/30 bg-vanessa-deep-blue/95 shadow-2xl shadow-vanessa-warning/10 backdrop-blur-xl">
+          <div className="glass-strong mx-auto max-w-sm overflow-hidden rounded-2xl shadow-2xl shadow-vanessa-warning/10">
             <div className="flex items-center gap-3 border-b border-vanessa-warning/20 px-4 py-3">
               <ShieldAlert className="h-5 w-5 text-vanessa-warning" />
               <span className="text-sm font-semibold text-vanessa-warning">

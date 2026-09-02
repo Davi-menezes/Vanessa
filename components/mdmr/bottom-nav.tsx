@@ -19,7 +19,7 @@ const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
 
 export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border/50 bg-card/95 backdrop-blur-xl lg:hidden" role="navigation" aria-label="Menu principal">
+    <nav className="glass-strong fixed inset-x-0 bottom-0 z-30 border-t border-border/40 lg:hidden" role="navigation" aria-label="Menu principal">
       <div className="mx-auto flex max-w-md items-center justify-around px-2 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
         {tabs.map(tab => (
           <motion.button

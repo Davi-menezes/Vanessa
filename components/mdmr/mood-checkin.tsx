@@ -13,14 +13,6 @@ const iconMap: Record<MoodType, React.ReactNode> = {
   calmaria: <Leaf className="h-7 w-7" />,
 }
 
-const moodGradients: Record<MoodType, string> = {
-  ansiedade: 'from-vanessa-warning/20 to-vanessa-warning/5',
-  tedio: 'from-muted/40 to-muted/10',
-  euforia: 'from-vanessa-lavender/20 to-vanessa-lavender/5',
-  tristeza: 'from-vanessa-calm/20 to-vanessa-calm/5',
-  calmaria: 'from-vanessa-success/20 to-vanessa-success/5',
-}
-
 interface MoodCheckinProps {
   onSelectMood: (mood: MoodType) => void
 }
@@ -62,7 +54,7 @@ export function MoodCheckin({ onSelectMood }: MoodCheckinProps) {
             whileTap={{ scale: 0.92 }}
             whileHover={{ scale: 1.04 }}
             onClick={() => onSelectMood(mood)}
-            className={`flex flex-col items-center gap-2.5 rounded-2xl bg-gradient-to-b ${moodGradients[mood]} border border-border/50 px-4 py-5 transition-colors ${mood === 'calmaria' ? 'col-span-2' : ''}`}
+            className={`glass flex flex-col items-center gap-2.5 rounded-2xl px-4 py-5 transition-colors ${mood === 'calmaria' ? 'col-span-2' : ''}`}
           >
             <span className={MOOD_CONFIG[mood].color}>{iconMap[mood]}</span>
             <span className="text-sm font-medium text-foreground">{MOOD_CONFIG[mood].label}</span>

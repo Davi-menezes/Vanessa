@@ -133,7 +133,7 @@ export function HomeView({ onChangeMood, onLogout, transactions, onClearHistory,
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.15 }}
-        className="flex flex-col gap-4 rounded-2xl border border-vanessa-lavender/15 bg-gradient-to-br from-vanessa-deep-blue to-card p-5"
+        className="glass glass-glow flex flex-col gap-4 rounded-2xl p-5"
       >
         <div className="flex items-center gap-2">
           <Wallet className="h-4 w-4 text-vanessa-lavender" />
@@ -271,7 +271,7 @@ export function HomeView({ onChangeMood, onLogout, transactions, onClearHistory,
 
       {showDueModal && (fixedCostReminders.dueToday.length > 0 || fixedCostReminders.overdue.length > 0) && (
         <div className="fixed inset-0 z-50 flex items-end bg-background/70 backdrop-blur-sm">
-          <div className="w-full rounded-t-3xl border-t border-border bg-card p-5 pb-8">
+          <div className="glass w-full rounded-t-3xl border-t border-border/40 p-5 pb-8">
             <p className="text-sm font-medium text-foreground">Lembrete de gastos fixos</p>
             <ul className="mt-3 flex flex-col gap-1 text-sm text-secondary-foreground">
               {fixedCostReminders.dueToday.map(item => (

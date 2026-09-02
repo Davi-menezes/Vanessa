@@ -84,7 +84,7 @@ export function TransactionList({ transactions, hiddenIds, onHideNotification, o
 
       {selectedTxId && (
         <div className="fixed inset-0 z-50 flex items-end bg-background/70 backdrop-blur-sm">
-          <div className="w-full rounded-t-3xl border-t border-border bg-card p-5 pb-8">
+          <div className="glass-strong w-full rounded-t-3xl border-t border-border/40 p-5 pb-8">
             <p className="text-sm font-medium text-foreground">Como voce quer remover?</p>
             <p className="mt-1 text-xs text-muted-foreground">
               Escolha se quer esconder apenas o card ou apagar o valor do sistema.

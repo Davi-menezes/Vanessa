@@ -1,55 +1,56 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-/* mdmr - Dark Minimalist Theme (matches iOS/Android shared theme) */
-/* Very dark navy with lavender accents for calm financial tracking */
+/* mdmr - Jungle Glassmorphism Theme */
+/* Near-black deep forest with vibrant green (#0e450b) accents and glass surfaces */
 @theme inline {
   --font-sans: 'Plus Jakarta Sans', 'Geist', 'Geist Fallback', sans-serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback', monospace;
-  
-  --color-background: oklch(0.11 0.015 260);
-  --color-foreground: oklch(0.92 0.02 280);
-  --color-card: oklch(0.15 0.02 260);
-  --color-card-foreground: oklch(0.92 0.02 280);
-  --color-popover: oklch(0.15 0.02 260);
-  --color-popover-foreground: oklch(0.92 0.02 280);
-  --color-primary: oklch(0.65 0.18 280);
-  --color-primary-foreground: oklch(0.98 0.005 280);
-  --color-secondary: oklch(0.18 0.025 260);
-  --color-secondary-foreground: oklch(0.85 0.03 280);
-  --color-muted: oklch(0.18 0.02 260);
-  --color-muted-foreground: oklch(0.62 0.04 280);
-  --color-accent: oklch(0.6 0.15 220);
-  --color-accent-foreground: oklch(0.98 0.005 280);
+
+  --color-background: oklch(0.13 0.02 150);
+  --color-foreground: oklch(0.93 0.02 140);
+  --color-card: oklch(0.16 0.025 150);
+  --color-card-foreground: oklch(0.93 0.02 140);
+  --color-popover: oklch(0.16 0.025 150);
+  --color-popover-foreground: oklch(0.93 0.02 140);
+  --color-primary: oklch(0.55 0.16 150);
+  --color-primary-foreground: oklch(0.99 0.005 140);
+  --color-secondary: oklch(0.19 0.03 150);
+  --color-secondary-foreground: oklch(0.88 0.03 140);
+  --color-muted: oklch(0.19 0.025 150);
+  --color-muted-foreground: oklch(0.66 0.04 150);
+  --color-accent: oklch(0.5 0.14 155);
+  --color-accent-foreground: oklch(0.99 0.005 140);
   --color-destructive: oklch(0.6 0.2 25);
   --color-destructive-foreground: oklch(0.98 0.01 25);
-  --color-border: oklch(0.22 0.02 260);
-  --color-input: oklch(0.18 0.025 260);
-  --color-ring: oklch(0.65 0.18 280);
-  --color-chart-1: oklch(0.65 0.18 280);
-  --color-chart-2: oklch(0.6 0.15 220);
-  --color-chart-3: oklch(0.65 0.15 160);
-  --color-chart-4: oklch(0.7 0.15 70);
+  --color-border: oklch(0.26 0.03 150);
+  --color-input: oklch(0.21 0.03 150);
+  --color-ring: oklch(0.55 0.16 150);
+  --color-chart-1: oklch(0.55 0.16 150);
+  --color-chart-2: oklch(0.5 0.14 155);
+  --color-chart-3: oklch(0.55 0.13 160);
+  --color-chart-4: oklch(0.68 0.13 80);
   --color-chart-5: oklch(0.6 0.2 25);
   --radius: 0.75rem;
-  --color-sidebar: oklch(0.11 0.015 260);
-  --color-sidebar-foreground: oklch(0.92 0.02 280);
-  --color-sidebar-primary: oklch(0.65 0.18 280);
-  --color-sidebar-primary-foreground: oklch(0.98 0.005 280);
-  --color-sidebar-accent: oklch(0.18 0.025 260);
-  --color-sidebar-accent-foreground: oklch(0.85 0.03 280);
-  --color-sidebar-border: oklch(0.22 0.02 260);
-  --color-sidebar-ring: oklch(0.65 0.18 280);
+  --color-sidebar: oklch(0.13 0.02 150);
+  --color-sidebar-foreground: oklch(0.93 0.02 140);
+  --color-sidebar-primary: oklch(0.55 0.16 150);
+  --color-sidebar-primary-foreground: oklch(0.99 0.005 140);
+  --color-sidebar-accent: oklch(0.19 0.03 150);
+  --color-sidebar-accent-foreground: oklch(0.88 0.03 140);
+  --color-sidebar-border: oklch(0.26 0.03 150);
+  --color-sidebar-ring: oklch(0.55 0.16 150);
 
-  /* Custom mdmr tokens - matching shared ThemeTokens */
-  --color-vanessa-calm: oklch(0.6 0.15 220);
-  --color-vanessa-warning: oklch(0.7 0.15 70);
+  /* Custom mdmr tokens - jungle remap.
+     Names preserved across the app; only values change to the selva palette. */
+  --color-vanessa-calm: oklch(0.55 0.11 155);          /* calm mist green */
+  --color-vanessa-warning: oklch(0.68 0.13 85);        /* amber for alerts */
   --color-vanessa-danger: oklch(0.6 0.2 25);
-  --color-vanessa-success: oklch(0.65 0.15 160);
-  --color-vanessa-lavender: oklch(0.65 0.18 280);
-  --color-vanessa-deep-blue: oklch(0.11 0.015 260);
-  --color-vanessa-glow: oklch(0.75 0.12 280);
-  
+  --color-vanessa-success: oklch(0.5 0.16 150);        /* primary jungle green */
+  --color-vanessa-lavender: oklch(0.45 0.16 150);      /* deep jungle green (#0e450b) */
+  --color-vanessa-deep-blue: oklch(0.13 0.02 150);     /* near-black forest */
+  --color-vanessa-glow: oklch(0.7 0.14 150);           /* luminous leaf glow */
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -63,6 +64,46 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Jungle ambient background — deep forest gradient with a soft canopy glow */
+body {
+  background-color: oklch(0.11 0.02 150);
+  background-image:
+    radial-gradient(1200px 800px at 15% -10%, oklch(0.28 0.10 150 / 0.28), transparent 60%),
+    radial-gradient(1000px 700px at 110% 20%, oklch(0.24 0.08 150 / 0.22), transparent 55%),
+    radial-gradient(900px 900px at 50% 120%, oklch(0.15 0.04 150 / 0.35), transparent 65%);
+  background-attachment: fixed;
+  color: oklch(0.93 0.02 140);
+}
+
+/* Glassmorphism surface */
+.glass {
+  background: oklch(0.9 0.01 150 / 0.05);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid oklch(0.9 0.02 150 / 0.12);
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.06),
+    0 8px 32px oklch(0 0 0 / 0.35);
+}
+
+.glass-strong {
+  background: oklch(0.16 0.025 150 / 0.55);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid oklch(0.9 0.02 150 / 0.14);
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.08),
+    0 12px 40px oklch(0 0 0 / 0.45);
+}
+
+/* Subtle green border glow for focus/emphasis surfaces */
+.glass-glow {
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.06),
+    0 0 0 1px oklch(0.55 0.16 150 / 0.18),
+    0 8px 32px oklch(0.55 0.16 150 / 0.18);
 }
 
 /* Smooth scrolling for mobile */

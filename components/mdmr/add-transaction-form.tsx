@@ -68,7 +68,7 @@ export function AddTransactionForm({ onAdd, onClose }: AddTransactionFormProps) 
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-        className="w-full rounded-t-3xl border-t border-border bg-card p-6 pb-10"
+        className="glass-strong w-full rounded-t-3xl border-t border-border/40 p-6 pb-10"
       >
         <div className="mb-5 flex items-center justify-between">
           <h3 className="text-lg font-semibold text-foreground">Nova Transacao</h3>
