@@ -1,60 +1,63 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-/* mdmr - Jungle Glassmorphism Theme */
-/* Near-black deep forest with vibrant green (#0e450b) accents and glass surfaces */
+/* mdmr - Jungle Glassmorphism */
+/* Deep black forest + #0e450b green — real glass, real depth, real glow */
+
 @theme inline {
   --font-sans: 'Plus Jakarta Sans', 'Geist', 'Geist Fallback', sans-serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback', monospace;
 
-  --color-background: oklch(0.13 0.02 150);
-  --color-foreground: oklch(0.93 0.02 140);
-  --color-card: oklch(0.16 0.025 150);
-  --color-card-foreground: oklch(0.93 0.02 140);
-  --color-popover: oklch(0.16 0.025 150);
-  --color-popover-foreground: oklch(0.93 0.02 140);
-  --color-primary: oklch(0.55 0.16 150);
-  --color-primary-foreground: oklch(0.99 0.005 140);
-  --color-secondary: oklch(0.19 0.03 150);
-  --color-secondary-foreground: oklch(0.88 0.03 140);
-  --color-muted: oklch(0.19 0.025 150);
-  --color-muted-foreground: oklch(0.66 0.04 150);
-  --color-accent: oklch(0.5 0.14 155);
-  --color-accent-foreground: oklch(0.99 0.005 140);
-  --color-destructive: oklch(0.6 0.2 25);
+  /* Base surfaces */
+  --color-background: oklch(0.08 0.008 150);
+  --color-foreground: oklch(0.92 0.02 145);
+  --color-card: oklch(0.13 0.018 150);
+  --color-card-foreground: oklch(0.92 0.02 145);
+  --color-popover: oklch(0.13 0.018 150);
+  --color-popover-foreground: oklch(0.92 0.02 145);
+  --color-primary: oklch(0.45 0.14 150);         /* #0e450b family */
+  --color-primary-foreground: oklch(0.99 0.005 145);
+  --color-secondary: oklch(0.16 0.022 150);
+  --color-secondary-foreground: oklch(0.85 0.03 145);
+  --color-muted: oklch(0.17 0.022 150);
+  --color-muted-foreground: oklch(0.58 0.035 150);
+  --color-accent: oklch(0.42 0.12 152);
+  --color-accent-foreground: oklch(0.99 0.005 145);
+  --color-destructive: oklch(0.55 0.18 25);
   --color-destructive-foreground: oklch(0.98 0.01 25);
-  --color-border: oklch(0.26 0.03 150);
-  --color-input: oklch(0.21 0.03 150);
-  --color-ring: oklch(0.55 0.16 150);
-  --color-chart-1: oklch(0.55 0.16 150);
-  --color-chart-2: oklch(0.5 0.14 155);
-  --color-chart-3: oklch(0.55 0.13 160);
-  --color-chart-4: oklch(0.68 0.13 80);
-  --color-chart-5: oklch(0.6 0.2 25);
-  --radius: 0.75rem;
-  --color-sidebar: oklch(0.13 0.02 150);
-  --color-sidebar-foreground: oklch(0.93 0.02 140);
-  --color-sidebar-primary: oklch(0.55 0.16 150);
-  --color-sidebar-primary-foreground: oklch(0.99 0.005 140);
-  --color-sidebar-accent: oklch(0.19 0.03 150);
-  --color-sidebar-accent-foreground: oklch(0.88 0.03 140);
-  --color-sidebar-border: oklch(0.26 0.03 150);
-  --color-sidebar-ring: oklch(0.55 0.16 150);
+  --color-border: oklch(0.22 0.025 150);
+  --color-input: oklch(0.18 0.025 150);
+  --color-ring: oklch(0.45 0.14 150);
+  --color-chart-1: oklch(0.48 0.13 150);
+  --color-chart-2: oklch(0.42 0.12 152);
+  --color-chart-3: oklch(0.50 0.11 160);
+  --color-chart-4: oklch(0.65 0.10 85);
+  --color-chart-5: oklch(0.55 0.18 25);
+  --radius: 1rem;
 
-  /* Custom mdmr tokens - jungle remap.
-     Names preserved across the app; only values change to the selva palette. */
-  --color-vanessa-calm: oklch(0.55 0.11 155);          /* calm mist green */
-  --color-vanessa-warning: oklch(0.68 0.13 85);        /* amber for alerts */
-  --color-vanessa-danger: oklch(0.6 0.2 25);
-  --color-vanessa-success: oklch(0.5 0.16 150);        /* primary jungle green */
-  --color-vanessa-lavender: oklch(0.45 0.16 150);      /* deep jungle green (#0e450b) */
-  --color-vanessa-deep-blue: oklch(0.13 0.02 150);     /* near-black forest */
-  --color-vanessa-glow: oklch(0.7 0.14 150);           /* luminous leaf glow */
+  --color-sidebar: oklch(0.08 0.008 150);
+  --color-sidebar-foreground: oklch(0.92 0.02 145);
+  --color-sidebar-primary: oklch(0.45 0.14 150);
+  --color-sidebar-primary-foreground: oklch(0.99 0.005 145);
+  --color-sidebar-accent: oklch(0.16 0.022 150);
+  --color-sidebar-accent-foreground: oklch(0.85 0.03 145);
+  --color-sidebar-border: oklch(0.22 0.025 150);
+  --color-sidebar-ring: oklch(0.45 0.14 150);
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  /* mdmr jungle tokens */
+  --color-vanessa-calm: oklch(0.52 0.10 158);
+  --color-vanessa-warning: oklch(0.65 0.11 85);
+  --color-vanessa-danger: oklch(0.58 0.18 25);
+  --color-vanessa-success: oklch(0.48 0.14 150);      /* jungle green primary */
+  --color-vanessa-lavender: oklch(0.38 0.13 150);     /* deep #0e450b */
+  --color-vanessa-deep-blue: oklch(0.08 0.008 150);   /* near black forest */
+  --color-vanessa-glow: oklch(0.68 0.12 150);         /* luminous canopy */
+
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 4px);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) + 6px);
+  --radius-2xl: calc(var(--radius) + 12px);
 }
 
 @layer base {
@@ -63,59 +66,197 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02";
   }
 }
 
-/* Jungle ambient background — deep forest gradient with a soft canopy glow */
+/* ————————————————————————————————
+   JUNGLE BACKGROUND SCENE
+   Multi-layer animated canopy blobs + noise texture
+————————————————————————————— */
 body {
-  background-color: oklch(0.11 0.02 150);
-  background-image:
-    radial-gradient(1200px 800px at 15% -10%, oklch(0.28 0.10 150 / 0.28), transparent 60%),
-    radial-gradient(1000px 700px at 110% 20%, oklch(0.24 0.08 150 / 0.22), transparent 55%),
-    radial-gradient(900px 900px at 50% 120%, oklch(0.15 0.04 150 / 0.35), transparent 65%);
-  background-attachment: fixed;
-  color: oklch(0.93 0.02 140);
+  background-color: oklch(0.07 0.006 150);
+  overflow-x: hidden;
 }
 
-/* Glassmorphism surface */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    /* Canopy top-left */
+    radial-gradient(ellipse 900px 600px at 8% -15%, oklch(0.32 0.16 150 / 0.55), transparent 65%),
+    /* Canopy right edge */
+    radial-gradient(ellipse 700px 900px at 115% 30%, oklch(0.26 0.13 150 / 0.45), transparent 60%),
+    /* Deep forest floor */
+    radial-gradient(ellipse 800px 600px at 50% 130%, oklch(0.20 0.10 150 / 0.50), transparent 65%),
+    /* Mist middle */
+    radial-gradient(ellipse 600px 400px at 60% 55%, oklch(0.18 0.06 152 / 0.20), transparent 60%);
+  animation: canopy-drift 24s ease-in-out infinite alternate;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* Subtle forest noise texture using SVG data URI */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E");
+  background-size: 512px 512px;
+  opacity: 0.4;
+}
+
+@keyframes canopy-drift {
+  0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+  33%  { transform: translate(12px, -8px) rotate(0.5deg) scale(1.02); }
+  66%  { transform: translate(-8px, 12px) rotate(-0.3deg) scale(0.99); }
+  100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+}
+
+/* ————————————————————————————————
+   GLASS SYSTEM
+   True glassmorphism: blur, luminance, specular, refraction
+————————————————————————————— */
+
+/* Primary glass surface */
 .glass {
-  background: oklch(0.9 0.01 150 / 0.05);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
-  border: 1px solid oklch(0.9 0.02 150 / 0.12);
+  background:
+    linear-gradient(
+      135deg,
+      oklch(1 0 0 / 0.07) 0%,
+      oklch(1 0 0 / 0.02) 50%,
+      oklch(1 0 0 / 0.04) 100%
+    ),
+    oklch(0.14 0.018 150 / 0.65);
+  backdrop-filter: blur(20px) saturate(1.6);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  border: 1px solid oklch(1 0 0 / 0.10);
   box-shadow:
-    inset 0 1px 0 oklch(1 0 0 / 0.06),
-    0 8px 32px oklch(0 0 0 / 0.35);
+    /* Inner light from top-left */
+    inset 0 1px 0 oklch(1 0 0 / 0.15),
+    inset 1px 0 0 oklch(1 0 0 / 0.06),
+    inset 0 -1px 0 oklch(0 0 0 / 0.30),
+    inset -1px 0 0 oklch(0 0 0 / 0.15),
+    /* Outer depth */
+    0 4px 16px oklch(0 0 0 / 0.40),
+    0 1px 4px oklch(0 0 0 / 0.30),
+    /* Green ambient bounce */
+    0 0 32px oklch(0.38 0.13 150 / 0.08);
 }
 
+/* Stronger glass for modals/sheets */
 .glass-strong {
-  background: oklch(0.16 0.025 150 / 0.55);
-  backdrop-filter: blur(24px) saturate(150%);
-  -webkit-backdrop-filter: blur(24px) saturate(150%);
-  border: 1px solid oklch(0.9 0.02 150 / 0.14);
+  background:
+    linear-gradient(
+      135deg,
+      oklch(1 0 0 / 0.09) 0%,
+      oklch(1 0 0 / 0.03) 50%,
+      oklch(1 0 0 / 0.06) 100%
+    ),
+    oklch(0.12 0.014 150 / 0.78);
+  backdrop-filter: blur(32px) saturate(1.8);
+  -webkit-backdrop-filter: blur(32px) saturate(1.8);
+  border: 1px solid oklch(1 0 0 / 0.12);
   box-shadow:
-    inset 0 1px 0 oklch(1 0 0 / 0.08),
-    0 12px 40px oklch(0 0 0 / 0.45);
+    inset 0 1px 0 oklch(1 0 0 / 0.18),
+    inset 1px 0 0 oklch(1 0 0 / 0.08),
+    inset 0 -1px 0 oklch(0 0 0 / 0.40),
+    inset -1px 0 0 oklch(0 0 0 / 0.20),
+    0 8px 32px oklch(0 0 0 / 0.50),
+    0 2px 8px oklch(0 0 0 / 0.40),
+    0 0 48px oklch(0.35 0.12 150 / 0.12);
 }
 
-/* Subtle green border glow for focus/emphasis surfaces */
+/* Glass with jungle green neon border */
 .glass-glow {
   box-shadow:
-    inset 0 1px 0 oklch(1 0 0 / 0.06),
-    0 0 0 1px oklch(0.55 0.16 150 / 0.18),
-    0 8px 32px oklch(0.55 0.16 150 / 0.18);
+    inset 0 1px 0 oklch(1 0 0 / 0.12),
+    inset 1px 0 0 oklch(1 0 0 / 0.06),
+    inset 0 -1px 0 oklch(0 0 0 / 0.25),
+    0 4px 16px oklch(0 0 0 / 0.40),
+    0 0 0 1px oklch(0.38 0.13 150 / 0.20),
+    0 0 24px oklch(0.38 0.13 150 / 0.15),
+    0 0 64px oklch(0.38 0.13 150 / 0.08);
 }
 
-/* Smooth scrolling for mobile */
+/* Subtle card glass (for list items, small surfaces) */
+.glass-card {
+  background:
+    linear-gradient(
+      145deg,
+      oklch(1 0 0 / 0.06) 0%,
+      oklch(1 0 0 / 0.01) 100%
+    ),
+    oklch(0.12 0.016 150 / 0.55);
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  border: 1px solid oklch(1 0 0 / 0.08);
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.10),
+    inset 0 -1px 0 oklch(0 0 0 / 0.30),
+    0 2px 12px oklch(0 0 0 / 0.35);
+}
+
+/* ————————————————————————————————
+   INTERACTIVE STATES
+————————————————————————————— */
+.glass-card-hover {
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.glass-card-hover:hover {
+  border-color: oklch(1 0 0 / 0.14);
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.16),
+    inset 0 -1px 0 oklch(0 0 0 / 0.25),
+    0 6px 24px oklch(0 0 0 / 0.45),
+    0 0 16px oklch(0.38 0.13 150 / 0.12);
+}
+
+/* Neon green focus ring */
+.glass-focus {
+  outline: none;
+}
+.glass-focus:focus-within,
+.glass-focus:focus {
+  border-color: oklch(0.45 0.14 150 / 0.50) !important;
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.15),
+    inset 0 -1px 0 oklch(0 0 0 / 0.25),
+    0 0 0 3px oklch(0.45 0.14 150 / 0.15),
+    0 4px 16px oklch(0 0 0 / 0.40),
+    0 0 24px oklch(0.45 0.14 150 / 0.12);
+}
+
+/* ————————————————————————————————
+   PRIMITIVE OVERRIDES
+   Buttons, inputs, pills — all glass
+————————————————————————————— */
+input, textarea, select {
+  &:focus {
+    outline: none;
+    border-color: oklch(0.45 0.14 150 / 0.50) !important;
+    box-shadow:
+      0 0 0 3px oklch(0.45 0.14 150 / 0.12),
+      0 0 20px oklch(0.45 0.14 150 / 0.08) !important;
+  }
+}
+
+/* Smooth everything */
+* {
+  transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Hide scrollbar for a cleaner mobile experience */
-body::-webkit-scrollbar {
-  display: none;
-}
+/* Hide scrollbar */
+body::-webkit-scrollbar { display: none; }
 body {
   -ms-overflow-style: none;
   scrollbar-width: none;

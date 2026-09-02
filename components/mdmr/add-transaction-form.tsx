@@ -16,6 +16,17 @@ interface AddTransactionFormProps {
 
 const categories = Object.keys(CATEGORY_LABELS) as TransactionCategory[]
 
+const glassInput = (extra?: React.CSSProperties): React.CSSProperties => ({
+  background: 'oklch(0.14 0.020 150 / 0.55)',
+  backdropFilter: 'blur(16px) saturate(1.5)',
+  WebkitBackdropFilter: 'blur(16px) saturate(1.5)',
+  border: '1px solid oklch(1 0 0 / 0.10)',
+  boxShadow: 'inset 0 1px 0 oklch(1 0 0 / 0.10), inset 0 -1px 0 oklch(0 0 0 / 0.25)',
+  borderRadius: '14px',
+  color: 'oklch(0.88 0.02 145)',
+  ...extra,
+})
+
 export function AddTransactionForm({ onAdd, onClose }: AddTransactionFormProps) {
   const [value, setValue] = useState('')
   const [category, setCategory] = useState<TransactionCategory>('alimentacao')
@@ -29,228 +40,183 @@ export function AddTransactionForm({ onAdd, onClose }: AddTransactionFormProps) 
     e.preventDefault()
     const numValue = parseFloat(value)
     if (isNaN(numValue) || numValue <= 0) return
-
-    const finalDescription =
-      type === 'entrada'
-        ? (
-            description.trim()
-            || (incomeKind === 'salario' ? 'Salario' : '')
-          )
-        : description.trim()
-
+    const finalDescription = type === 'entrada' ? (description.trim() || (incomeKind === 'salario' ? 'Salario' : '')) : description.trim()
     if (!finalDescription) return
-
-    const finalCategory: TransactionCategory =
-      type === 'entrada' && incomeKind === 'salario'
-        ? 'outros'
-        : category
-
+    const finalCategory: TransactionCategory = type === 'entrada' && incomeKind === 'salario' ? 'outros' : category
     const finalPaymentMethod: PaymentMethod = type === 'entrada' ? 'conta_corrente' : paymentMethod
-    onAdd({
-      value: numValue,
-      category: finalCategory,
-      type,
-      paymentMethod: finalPaymentMethod,
-      description: finalDescription,
-      excludeFromSavingsAdvice: type === 'saida' && finalCategory === 'educacao' && isEducationTuition,
-    })
+    onAdd({ value: numValue, category: finalCategory, type, paymentMethod: finalPaymentMethod, description: finalDescription, excludeFromSavingsAdvice: type === 'saida' && finalCategory === 'educacao' && isEducationTuition })
   }
+
+  const toggleBtn = (active: boolean, color: string): React.CSSProperties => ({
+    background: active ? color : 'oklch(0.16 0.022 150 / 0.60)',
+    backdropFilter: active ? 'blur(12px)' : 'none',
+    border: active ? `1px solid ${color.replace('/ 0.35', '/ 0.55')}` : '1px solid transparent',
+    boxShadow: active ? `inset 0 1px 0 oklch(1 0 0 / 0.10), 0 0 16px ${color}` : 'none',
+    color: active ? 'oklch(0.88 0.02 145)' : 'oklch(0.50 0.025 150)',
+    borderRadius: '10px',
+    transition: 'all 0.2s ease',
+    fontWeight: 500,
+  })
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-end bg-background/80 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-end"
+      style={{ background: 'oklch(0.05 0.005 150 / 0.65)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}
     >
       <motion.div
         initial={{ y: '100%' }}
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
-        transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-        className="glass-strong w-full rounded-t-3xl border-t border-border/40 p-6 pb-10"
+        transition={{ type: 'spring', damping: 32, stiffness: 320 }}
+        className="glass-strong w-full rounded-t-[28px] border-t border-white/10 p-6 pb-10"
+        style={{ boxShadow: 'inset 0 1px 0 oklch(1 0 0 / 0.12), 0 -24px 64px oklch(0 0 0 / 0.60)' }}
       >
+        {/* Header */}
         <div className="mb-5 flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-foreground">Nova Transacao</h3>
-          <button onClick={onClose}>
-            <X className="h-5 w-5 text-muted-foreground" />
+          <h3 className="text-[17px] font-semibold text-foreground">Nova Transacao</h3>
+          <button
+            onClick={onClose}
+            className="glass-card flex h-8 w-8 items-center justify-center rounded-xl text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <X className="h-4 w-4" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
           {/* Type toggle */}
-          <div className="flex gap-2 rounded-xl bg-secondary/50 p-1">
-            <button
-              type="button"
-              onClick={() => {
-                setType('saida')
-                setIncomeKind('salario')
-                setIsEducationTuition(false)
-              }}
-              className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${type === 'saida' ? 'bg-vanessa-danger/20 text-vanessa-danger' : 'text-muted-foreground'}`}
-            >
-              Saida
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setType('entrada')
-                setIsEducationTuition(false)
-              }}
-              className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${type === 'entrada' ? 'bg-vanessa-success/20 text-vanessa-success' : 'text-muted-foreground'}`}
-            >
-              Entrada
-            </button>
+          <div className="glass-card flex gap-1 rounded-2xl p-1">
+            {(['saida', 'entrada'] as const).map(t => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => { setType(t); setIncomeKind('salario'); setIsEducationTuition(false) }}
+                className="flex-1 py-2.5 text-sm"
+                style={toggleBtn(type === t, type === 'saida' ? 'oklch(0.50 0.18 25 / 0.30)' : 'oklch(0.38 0.14 150 / 0.35)')}
+              >
+                {t === 'saida' ? 'Saida' : 'Entrada'}
+              </button>
+            ))}
           </div>
 
+          {/* Income kind */}
           {type === 'entrada' && (
-            <div className="flex gap-2 rounded-xl bg-secondary/40 p-1">
-              <button
-                type="button"
-                onClick={() => {
-                  setIncomeKind('salario')
-                  setCategory('outros')
-                  if (!description.trim()) setDescription('Salario')
-                }}
-                className={`flex-1 rounded-lg py-2 text-xs font-medium transition-colors ${
-                  incomeKind === 'salario'
-                    ? 'bg-vanessa-success/20 text-vanessa-success'
-                    : 'text-muted-foreground'
-                }`}
-              >
-                Salario
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setIncomeKind('outro')
-                  if (description.trim() === 'Salario') setDescription('')
-                }}
-                className={`flex-1 rounded-lg py-2 text-xs font-medium transition-colors ${
-                  incomeKind === 'outro'
-                    ? 'bg-vanessa-lavender/20 text-vanessa-lavender'
-                    : 'text-muted-foreground'
-                }`}
-              >
-                Outra entrada
-              </button>
+            <div className="glass-card flex gap-1 rounded-2xl p-1">
+              {(['salario', 'outro'] as const).map(k => (
+                <button
+                  key={k}
+                  type="button"
+                  onClick={() => { setIncomeKind(k); if (k === 'salario') { setCategory('outros'); if (!description.trim()) setDescription('Salario') } else if (description === 'Salario') setDescription('') }}
+                  className="flex-1 py-2 text-xs"
+                  style={toggleBtn(incomeKind === k, k === 'salario' ? 'oklch(0.38 0.14 150 / 0.25)' : 'oklch(0.32 0.11 152 / 0.30)')}
+                >
+                  {k === 'salario' ? 'Salario' : 'Outra entrada'}
+                </button>
+              ))}
             </div>
           )}
 
+          {/* Payment method */}
           {type === 'saida' && (
-            <div className="flex gap-2 rounded-xl bg-secondary/40 p-1">
-              <button
-                type="button"
-                onClick={() => setPaymentMethod('conta_corrente')}
-                className={`flex-1 rounded-lg py-2 text-xs font-medium transition-colors ${
-                  paymentMethod === 'conta_corrente'
-                    ? 'bg-vanessa-success/20 text-vanessa-success'
-                    : 'text-muted-foreground'
-                }`}
-              >
-                Conta corrente
-              </button>
-              <button
-                type="button"
-                onClick={() => setPaymentMethod('credito')}
-                className={`flex-1 rounded-lg py-2 text-xs font-medium transition-colors ${
-                  paymentMethod === 'credito'
-                    ? 'bg-vanessa-warning/20 text-vanessa-warning'
-                    : 'text-muted-foreground'
-                }`}
-              >
-                Credito
-              </button>
+            <div className="glass-card flex gap-1 rounded-2xl p-1">
+              {(['conta_corrente', 'credito'] as const).map(m => (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => setPaymentMethod(m)}
+                  className="flex-1 py-2 text-xs"
+                  style={toggleBtn(paymentMethod === m, m === 'conta_corrente' ? 'oklch(0.38 0.14 150 / 0.25)' : 'oklch(0.40 0.12 85 / 0.25)')}
+                >
+                  {m === 'conta_corrente' ? 'Conta corrente' : 'Credito'}
+                </button>
+              ))}
             </div>
           )}
 
+          {/* Value */}
           <div className="flex flex-col gap-1.5">
-            <Label className="text-xs text-muted-foreground">Valor (R$)</Label>
-            <Input
-              type="number"
-              step="0.01"
-              min="0"
-              value={value}
-              onChange={e => setValue(e.target.value)}
-              placeholder="0.00"
-              className="border-border bg-secondary/50 text-lg"
-              required
-            />
+            <Label className="text-xs font-medium" style={{ color: 'oklch(0.55 0.025 150)' }}>Valor (R$)</Label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[15px] text-muted-foreground">R$</span>
+              <Input
+                type="number" step="0.01" min="0"
+                value={value} onChange={e => setValue(e.target.value)}
+                placeholder="0.00"
+                className="pl-10 text-base focus:outline-none focus:ring-0"
+                style={glassInput({ paddingLeft: '2.75rem' })}
+                required
+              />
+            </div>
           </div>
 
+          {/* Description */}
           <div className="flex flex-col gap-1.5">
-            <Label className="text-xs text-muted-foreground">Descricao</Label>
+            <Label className="text-xs font-medium" style={{ color: 'oklch(0.55 0.025 150)' }}>Descricao</Label>
             <Input
-              value={description}
-              onChange={e => setDescription(e.target.value)}
+              value={description} onChange={e => setDescription(e.target.value)}
               placeholder={type === 'entrada' ? 'Ex: Salario, Freela...' : 'Ex: Supermercado, Uber...'}
-              className="border-border bg-secondary/50"
+              className="focus:outline-none focus:ring-0"
+              style={glassInput()}
               required
             />
           </div>
 
+          {/* Category grid */}
           <div className="flex flex-col gap-1.5">
-            <Label className="text-xs text-muted-foreground">Categoria</Label>
+            <Label className="text-xs font-medium" style={{ color: 'oklch(0.55 0.025 150)' }}>Categoria</Label>
             <div className="grid grid-cols-3 gap-2">
               {categories.map(cat => (
-                <motion.button
-                  key={cat}
-                  type="button"
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    setCategory(cat)
-                    if (cat !== 'educacao') setIsEducationTuition(false)
-                  }}
-                  className={`rounded-lg border px-2 py-2 text-[11px] transition-colors ${
-                    category === cat
-                      ? 'border-vanessa-lavender/50 bg-vanessa-lavender/15 text-vanessa-lavender'
-                      : 'border-border text-muted-foreground'
-                  }`}
+                <button
+                  key={cat} type="button"
+                  onClick={() => { setCategory(cat); if (cat !== 'educacao') setIsEducationTuition(false) }}
+                  className="py-2.5 text-[11px] font-medium rounded-xl transition-all"
+                  style={toggleBtn(category === cat, 'oklch(0.35 0.13 150 / 0.35)')}
                 >
                   {CATEGORY_LABELS[cat]}
-                </motion.button>
+                </button>
               ))}
             </div>
           </div>
 
+          {/* Education tuition */}
           {type === 'saida' && category === 'educacao' && (
             <div className="flex flex-col gap-1.5">
-              <Label className="text-xs text-muted-foreground">Esse gasto e mensalidade?</Label>
-              <div className="flex gap-2 rounded-xl bg-secondary/40 p-1">
-                <button
-                  type="button"
-                  onClick={() => setIsEducationTuition(true)}
-                  className={`flex-1 rounded-lg py-2 text-xs font-medium ${
-                    isEducationTuition ? 'bg-vanessa-calm/20 text-vanessa-calm' : 'text-muted-foreground'
-                  }`}
-                >
-                  Sim, mensalidade
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsEducationTuition(false)}
-                  className={`flex-1 rounded-lg py-2 text-xs font-medium ${
-                    !isEducationTuition ? 'bg-vanessa-lavender/20 text-vanessa-lavender' : 'text-muted-foreground'
-                  }`}
-                >
-                  Nao, gasto variavel
-                </button>
+              <Label className="text-xs font-medium" style={{ color: 'oklch(0.55 0.025 150)' }}>Esse gasto e mensalidade?</Label>
+              <div className="glass-card flex gap-1 rounded-2xl p-1">
+                {[true, false].map(v => (
+                  <button
+                    key={String(v)} type="button"
+                    onClick={() => setIsEducationTuition(v)}
+                    className="flex-1 py-2 text-xs"
+                    style={toggleBtn(isEducationTuition === v, v ? 'oklch(0.35 0.12 158 / 0.30)' : 'oklch(0.30 0.11 150 / 0.30)')}
+                  >
+                    {v ? 'Sim, mensalidade' : 'Nao, variavel'}
+                  </button>
+                ))}
               </div>
               {isEducationTuition && (
-                <p className="text-[11px] text-muted-foreground">
-                  Mensalidade nao entra nas sugestoes de "gastar menos" do Insights.
+                <p className="text-[11px]" style={{ color: 'oklch(0.50 0.04 150)' }}>
+                  Mensalidade nao entra nas sugestoes de "gastar menos" no Insights.
                 </p>
               )}
             </div>
           )}
 
-          <Button
+          {/* Submit */}
+          <motion.button
             type="submit"
-            className="mt-2 gap-2 bg-vanessa-lavender text-primary-foreground hover:bg-vanessa-lavender/90"
+            whileTap={{ scale: 0.98 }}
+            className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-semibold text-white"
+            style={{
+              background: 'linear-gradient(135deg, oklch(0.38 0.14 150) 0%, oklch(0.28 0.11 152) 100%)',
+              boxShadow: 'inset 0 1px 0 oklch(1 0 0 / 0.15), 0 0 0 1px oklch(0.45 0.14 150 / 0.25), 0 8px 28px oklch(0.38 0.14 150 / 0.35)',
+            }}
           >
             <Plus className="h-4 w-4" />
             Adicionar
-          </Button>
+          </motion.button>
         </form>
       </motion.div>
     </motion.div>

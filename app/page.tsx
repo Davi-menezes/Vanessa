@@ -139,8 +139,15 @@ export default function mdmrApp() {
   // Show nothing until auth is checked
   if (!authChecked) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-background">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-vanessa-lavender/30 border-t-vanessa-lavender" />
+      <main className="flex min-h-screen items-center justify-center">
+        <div
+          className="h-8 w-8 animate-spin rounded-full"
+          style={{
+            border: '2px solid oklch(0.30 0.12 150 / 0.25)',
+            borderTopColor: 'oklch(0.52 0.14 150)',
+            boxShadow: '0 0 24px oklch(0.38 0.13 150 / 0.30)',
+          }}
+        />
       </main>
     )
   }
@@ -155,7 +162,7 @@ export default function mdmrApp() {
       {/* Mood check-in overlay */}
       <AnimatePresence>
         {showMoodCheckin && (
-          <div className="fixed inset-0 z-50 bg-background">
+          <div className="fixed inset-0 z-50" style={{ background: 'oklch(0.07 0.008 150)', backdropFilter: 'blur(20px)' }}>
             <MoodCheckin onSelectMood={handleMoodSelect} />
           </div>
         )}

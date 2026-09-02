@@ -41,21 +41,17 @@ export function HomeView({ onChangeMood, onLogout, transactions, onClearHistory,
 
   const now = new Date()
   const monthTransactions = useMemo(
-    () =>
-      transactions.filter(tx => {
-        const txDate = new Date(tx.timestamp)
-        return txDate.getMonth() === now.getMonth() && txDate.getFullYear() === now.getFullYear() && !tx.sleeping
-      }),
+    () => transactions.filter(tx => {
+      const txDate = new Date(tx.timestamp)
+      return txDate.getMonth() === now.getMonth() && txDate.getFullYear() === now.getFullYear() && !tx.sleeping
+    }),
     [transactions, now]
   )
 
   const walletTransactions = useMemo(
-    () =>
-      monthTransactions.filter(tx =>
-        selectedWallet === 'conta_corrente'
-          ? tx.paymentMethod === 'conta_corrente' || tx.type === 'entrada'
-          : tx.paymentMethod === 'credito' && tx.type === 'saida'
-      ),
+    () => monthTransactions.filter(tx => selectedWallet === 'conta_corrente'
+      ? tx.paymentMethod === 'conta_corrente' || tx.type === 'entrada'
+      : tx.paymentMethod === 'credito' && tx.type === 'saida'),
     [monthTransactions, selectedWallet]
   )
 
@@ -65,18 +61,15 @@ export function HomeView({ onChangeMood, onLogout, transactions, onClearHistory,
   const displayedBalance = showCofrinhoDiscount ? rawBalance - piggySavedTotal : rawBalance
 
   const recentTxs = useMemo(
-    () =>
-      [...walletTransactions]
-        .filter(t => !t.sleeping && !hiddenNotificationIds.includes(t.id))
-        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-        .slice(0, 4),
+    () => [...walletTransactions]
+      .filter(t => !t.sleeping && !hiddenNotificationIds.includes(t.id))
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .slice(0, 4),
     [walletTransactions, hiddenNotificationIds]
   )
 
   useEffect(() => {
-    if (fixedCostReminders.dueToday.length > 0 || fixedCostReminders.overdue.length > 0) {
-      setShowDueModal(true)
-    }
+    if (fixedCostReminders.dueToday.length > 0 || fixedCostReminders.overdue.length > 0) setShowDueModal(true)
   }, [fixedCostReminders.dueToday.length, fixedCostReminders.overdue.length])
 
   const hour = new Date().getHours()
@@ -84,210 +77,284 @@ export function HomeView({ onChangeMood, onLogout, transactions, onClearHistory,
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col gap-5 px-5 pb-28 pt-6"
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      className="flex flex-col gap-5 px-5 pb-32 pt-6"
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm text-muted-foreground">{greeting}{userName ? `, ${userName.split(' ')[0]}` : ''}</p>
-          <h1 className="text-2xl font-semibold text-foreground">mdmr</h1>
+          <p className="text-[13px] text-muted-foreground">{greeting}{userName ? `, ${userName.split(' ')[0]}` : ''}</p>
+          <h1 className="text-[26px] font-semibold text-foreground tracking-tight">mdmr</h1>
         </div>
         <button
           onClick={onLogout}
-          className="rounded-xl border border-border/50 bg-secondary/30 p-2.5 text-muted-foreground transition-colors hover:bg-secondary/50 hover:text-foreground"
+          className="glass-card flex h-9 w-9 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:text-foreground"
           aria-label="Sair da conta"
-          title="Sair"
         >
           <LogOut className="h-4 w-4" />
         </button>
       </div>
 
-      {/* Current mood */}
+      {/* Mood bar */}
       {latestMood && (
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={onChangeMood}
-          className="flex items-center gap-3 rounded-2xl border border-border/50 bg-secondary/30 px-4 py-3"
+          className="glass glass-glow flex items-center gap-3 rounded-2xl px-4 py-3.5 text-left"
         >
-          <span className={MOOD_CONFIG[latestMood.mood].color}>
-            {moodIcons[latestMood.mood]}
-          </span>
+          <span className={MOOD_CONFIG[latestMood.mood].color}>{moodIcons[latestMood.mood]}</span>
           <div className="flex-1 text-left">
-            <p className="text-sm font-medium text-foreground">
-              Sentindo {MOOD_CONFIG[latestMood.mood].label}
-            </p>
+            <p className="text-sm font-medium text-foreground">Sentindo {MOOD_CONFIG[latestMood.mood].label}</p>
             <p className="text-xs text-muted-foreground">Toque para atualizar</p>
           </div>
           {MOOD_CONFIG[latestMood.mood].isImpulsive && (
-            <span className="rounded-full bg-vanessa-warning/15 px-2.5 py-1 text-[10px] font-medium text-vanessa-warning">
+            <span className="glass-card rounded-full px-2.5 py-1 text-[10px] font-medium" style={{ color: 'oklch(0.65 0.12 85)' }}>
               Alerta ativo
             </span>
           )}
         </motion.button>
       )}
 
-      {/* Balance card */}
+      {/* Balance card — the crown jewel */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.15 }}
-        className="glass glass-glow flex flex-col gap-4 rounded-2xl p-5"
+        initial={{ opacity: 0, scale: 0.96, y: 12 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ delay: 0.15, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className="relative overflow-hidden rounded-3xl"
+        style={{
+          background: 'oklch(0.09 0.012 150 / 0.55)',
+          backdropFilter: 'blur(28px) saturate(1.7)',
+          WebkitBackdropFilter: 'blur(28px) saturate(1.7)',
+          border: '1px solid oklch(1 0 0 / 0.12)',
+          boxShadow: [
+            'inset 0 1px 0 oklch(1 0 0 / 0.15)',
+            'inset 0 -1px 0 oklch(0 0 0 / 0.40)',
+            '0 0 0 1px oklch(0.35 0.13 150 / 0.18)',
+            '0 8px 32px oklch(0 0 0 / 0.50)',
+            '0 24px 70px oklch(0.35 0.13 150 / 0.18)',
+          ].join(', '),
+        }}
       >
-        <div className="flex items-center gap-2">
-          <Wallet className="h-4 w-4 text-vanessa-lavender" />
-          <span className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
-            {selectedWallet === 'conta_corrente' ? 'Saldo da Conta' : 'Fatura no Credito'}
-          </span>
-        </div>
-        <div className="flex gap-2 rounded-xl bg-secondary/40 p-1">
-          <button
-            onClick={() => setSelectedWallet('conta_corrente')}
-            className={`flex-1 rounded-lg py-2 text-xs font-medium ${
-              selectedWallet === 'conta_corrente'
-                ? 'bg-vanessa-success/20 text-vanessa-success'
-                : 'text-muted-foreground'
-            }`}
-          >
-            Conta corrente
-          </button>
-          <button
-            onClick={() => setSelectedWallet('credito')}
-            className={`flex-1 rounded-lg py-2 text-xs font-medium ${
-              selectedWallet === 'credito'
-                ? 'bg-vanessa-warning/20 text-vanessa-warning'
-                : 'text-muted-foreground'
-            }`}
-          >
-            Credito
-          </button>
-        </div>
-        <p className={`text-3xl font-bold ${displayedBalance >= 0 ? 'text-vanessa-success' : 'text-vanessa-danger'}`}>
-          R$ {displayedBalance.toFixed(2)}
-        </p>
-        <div className="flex items-center justify-between rounded-xl border border-border/40 bg-secondary/20 px-3 py-2">
-          <div>
-            <p className="text-xs font-medium text-foreground">Considerar valor guardado no cofrinho</p>
-            <p className="text-[10px] text-muted-foreground">Total guardado: R$ {piggySavedTotal.toFixed(2)}</p>
+        {/* Inner ambient bloom */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background: 'radial-gradient(ellipse 300px 200px at 30% 10%, oklch(0.35 0.14 150 / 0.18), transparent 70%)',
+          }}
+        />
+
+        <div className="relative p-6">
+          {/* Label + wallet toggle */}
+          <div className="mb-2 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Wallet className="h-4 w-4" style={{ color: 'oklch(0.52 0.14 150)' }} />
+              <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                {selectedWallet === 'conta_corrente' ? 'Saldo da Conta' : 'Fatura no Credito'}
+              </span>
+            </div>
           </div>
-          <Switch
-            checked={showCofrinhoDiscount}
-            onCheckedChange={setShowCofrinhoDiscount}
-            aria-label="Alternar saldo considerando valor guardado no cofrinho"
-          />
-        </div>
-        {selectedWallet === 'credito' && (
-          <p className="text-[10px] text-muted-foreground">
-            Gastos no credito entram como previsao e serao pagos no proximo mes.
+
+          {/* Wallet selector */}
+          <div className="glass-card mb-5 flex gap-1 rounded-2xl p-1">
+            {(['conta_corrente', 'credito'] as const).map(method => (
+              <button
+                key={method}
+                onClick={() => setSelectedWallet(method)}
+                className="flex-1 rounded-xl py-2 text-xs font-medium transition-all"
+                style={selectedWallet === method
+                  ? {
+                      background: 'oklch(0.35 0.13 150 / 0.30)',
+                      color: 'oklch(0.62 0.14 150)',
+                      boxShadow: 'inset 0 1px 0 oklch(1 0 0 / 0.12), 0 0 12px oklch(0.38 0.13 150 / 0.20)',
+                    }
+                  : { color: 'oklch(0.58 0.035 150)' }}
+              >
+                {method === 'conta_corrente' ? 'Conta corrente' : 'Credito'}
+              </button>
+            ))}
+          </div>
+
+          {/* Balance number */}
+          <p
+            className="mb-5 text-[34px] font-bold leading-none tracking-tight"
+            style={{
+              color: displayedBalance >= 0 ? 'oklch(0.62 0.14 150)' : 'oklch(0.65 0.16 25)',
+              textShadow: displayedBalance >= 0
+                ? '0 0 40px oklch(0.45 0.14 150 / 0.50)'
+                : '0 0 40px oklch(0.55 0.18 25 / 0.30)',
+            }}
+          >
+            R$ {displayedBalance.toFixed(2)}
           </p>
-        )}
-        <div className="flex gap-4">
-          <div className="flex items-center gap-1.5">
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-vanessa-success/15">
-              <ArrowUp className="h-3 w-3 text-vanessa-success" />
-            </div>
+
+          {/* Cofrinho toggle row */}
+          <div className="glass-card mb-4 flex items-center justify-between rounded-2xl px-3.5 py-3">
             <div>
-              <p className="text-[10px] text-muted-foreground">Receitas</p>
-              <p className="text-xs font-semibold text-vanessa-success">R$ {income.toFixed(2)}</p>
+              <p className="text-xs font-medium text-foreground">Considerar valor no cofrinho</p>
+              <p className="text-[10px] text-muted-foreground">Total guardado: R$ {piggySavedTotal.toFixed(2)}</p>
             </div>
+            <Switch
+              checked={showCofrinhoDiscount}
+              onCheckedChange={setShowCofrinhoDiscount}
+              aria-label="Alternar saldo com cofrinho"
+            />
           </div>
-          <div className="flex items-center gap-1.5">
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-vanessa-danger/15">
-              <ArrowDown className="h-3 w-3 text-vanessa-danger" />
+
+          {selectedWallet === 'credito' && (
+            <p className="mb-4 text-[10px] text-muted-foreground">
+              Gastos no credito entram como previsao para o proximo mes.
+            </p>
+          )}
+
+          {/* Income/expense row */}
+          <div className="flex gap-6">
+            <div className="flex items-center gap-2.5">
+              <div
+                className="flex h-8 w-8 items-center justify-center rounded-full"
+                style={{
+                  background: 'oklch(0.38 0.14 150 / 0.20)',
+                  border: '1px solid oklch(0.45 0.14 150 / 0.25)',
+                  boxShadow: 'inset 0 1px 0 oklch(1 0 0 / 0.10)',
+                }}
+              >
+                <ArrowUp className="h-3.5 w-3.5" style={{ color: 'oklch(0.60 0.14 150)' }} />
+              </div>
+              <div>
+                <p className="text-[10px] text-muted-foreground">Receitas</p>
+                <p className="text-sm font-semibold" style={{ color: 'oklch(0.60 0.14 150)' }}>R$ {income.toFixed(2)}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-[10px] text-muted-foreground">Saidas</p>
-              <p className="text-xs font-semibold text-vanessa-danger">R$ {expenses.toFixed(2)}</p>
+            <div className="flex items-center gap-2.5">
+              <div
+                className="flex h-8 w-8 items-center justify-center rounded-full"
+                style={{
+                  background: 'oklch(0.50 0.18 25 / 0.15)',
+                  border: '1px solid oklch(0.50 0.18 25 / 0.20)',
+                  boxShadow: 'inset 0 1px 0 oklch(1 0 0 / 0.08)',
+                }}
+              >
+                <ArrowDown className="h-3.5 w-3.5" style={{ color: 'oklch(0.65 0.16 25)' }} />
+              </div>
+              <div>
+                <p className="text-[10px] text-muted-foreground">Saidas</p>
+                <p className="text-sm font-semibold" style={{ color: 'oklch(0.65 0.16 25)' }}>R$ {expenses.toFixed(2)}</p>
+              </div>
             </div>
           </div>
         </div>
       </motion.div>
 
+      {/* Due soon banner */}
       {fixedCostReminders.dueSoon.length > 0 && (
-        <div className="rounded-2xl border border-vanessa-warning/30 bg-vanessa-warning/10 px-4 py-3">
-          <p className="text-xs font-medium uppercase tracking-[0.12em] text-vanessa-warning">Lembrete de vencimento</p>
-          <p className="mt-1 text-xs text-secondary-foreground">
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="glass-card rounded-2xl px-4 py-3"
+          style={{ borderColor: 'oklch(0.55 0.12 85 / 0.25)' }}
+        >
+          <p className="text-xs font-medium uppercase tracking-[0.12em]" style={{ color: 'oklch(0.68 0.12 85)' }}>
+            Lembrete de vencimento
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
             {fixedCostReminders.dueSoon.map(item => `${item.name} (${item.daysLeft}d)`).join(' • ')}
           </p>
-        </div>
+        </motion.div>
       )}
 
-      <div className="flex flex-col gap-2">
+      {/* Transaction history */}
+      <div className="flex flex-col gap-2.5">
         <div className="flex items-center justify-between">
-          <p className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">Historico</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Historico</p>
           {transactions.length > 0 && (
             <button
               onClick={onClearHistory}
-              className="flex items-center gap-1 rounded-lg border border-border/50 px-2 py-1 text-[10px] text-muted-foreground transition-colors hover:bg-secondary/40"
-              aria-label="Limpar historico"
+              className="glass-card flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-[10px] text-muted-foreground"
             >
-              <Trash2 className="h-3 w-3" />
-              Limpar
+              <Trash2 className="h-3 w-3" /> Limpar
             </button>
           )}
         </div>
+
         {recentTxs.length > 0 ? (
-          recentTxs.map(tx => (
-            <div
+          recentTxs.map((tx, i) => (
+            <motion.div
               key={tx.id}
-              className="relative flex items-center gap-3 rounded-xl border border-border/30 bg-secondary/20 px-3.5 py-2.5"
+              initial={{ opacity: 0, x: -16 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.35 + i * 0.07, ease: 'easeOut' }}
+              className="glass-card glass-card-hover relative flex items-center gap-3.5 rounded-2xl px-4 py-3.5"
             >
               <button
                 onClick={() => {
                   hideHomeTransactionNotification(tx.id)
                   setHiddenNotificationIds(prev => Array.from(new Set([...prev, tx.id])))
                 }}
-                className="absolute right-2 top-2 rounded-md p-1 text-vanessa-danger transition-colors hover:bg-vanessa-danger/10"
+                className="absolute right-2.5 top-2 rounded-md p-1 transition-colors hover:text-white"
+                style={{ color: 'oklch(0.58 0.18 25 / 0.70)' }}
                 aria-label="Remover notificacao"
-                title="Remover notificacao"
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                <Trash2 className="h-3 w-3" />
               </button>
-              <div className={`flex h-8 w-8 items-center justify-center rounded-full ${tx.type === 'entrada' ? 'bg-vanessa-success/15' : 'bg-vanessa-danger/15'}`}>
-                {tx.type === 'entrada' ? (
-                  <ArrowUp className="h-3.5 w-3.5 text-vanessa-success" />
-                ) : (
-                  <ArrowDown className="h-3.5 w-3.5 text-vanessa-danger" />
-                )}
+              <div
+                className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full"
+                style={tx.type === 'entrada'
+                  ? { background: 'oklch(0.38 0.14 150 / 0.18)', border: '1px solid oklch(0.45 0.14 150 / 0.20)' }
+                  : { background: 'oklch(0.50 0.18 25 / 0.12)', border: '1px solid oklch(0.50 0.18 25 / 0.15)' }}
+              >
+                {tx.type === 'entrada'
+                  ? <ArrowUp className="h-4 w-4" style={{ color: 'oklch(0.58 0.14 150)' }} />
+                  : <ArrowDown className="h-4 w-4" style={{ color: 'oklch(0.62 0.16 25)' }} />
+                }
               </div>
-              <div className="flex-1">
-                <p className="text-sm text-foreground">{tx.description}</p>
+              <div className="flex-1 min-w-0">
+                <p className="truncate text-sm font-medium text-foreground">{tx.description}</p>
                 <p className="text-[10px] text-muted-foreground">
                   {new Date(tx.timestamp).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
                 </p>
               </div>
-              <span className={`pr-6 text-sm font-semibold ${tx.type === 'entrada' ? 'text-vanessa-success' : 'text-foreground'}`}>
+              <span
+                className="pr-5 text-sm font-semibold"
+                style={{ color: tx.type === 'entrada' ? 'oklch(0.58 0.14 150)' : 'oklch(0.88 0.02 145)' }}
+              >
                 {tx.type === 'entrada' ? '+' : '-'}R$ {tx.value.toFixed(2)}
               </span>
-            </div>
+            </motion.div>
           ))
         ) : (
-          <div className="rounded-xl border border-border/30 bg-secondary/15 px-3 py-4 text-center text-xs text-muted-foreground">
+          <div
+            className="glass-card rounded-2xl px-4 py-5 text-center text-xs text-muted-foreground"
+          >
             Nenhuma transacao registrada.
           </div>
         )}
       </div>
 
+      {/* Due modal */}
       {showDueModal && (fixedCostReminders.dueToday.length > 0 || fixedCostReminders.overdue.length > 0) && (
-        <div className="fixed inset-0 z-50 flex items-end bg-background/70 backdrop-blur-sm">
-          <div className="glass w-full rounded-t-3xl border-t border-border/40 p-5 pb-8">
-            <p className="text-sm font-medium text-foreground">Lembrete de gastos fixos</p>
-            <ul className="mt-3 flex flex-col gap-1 text-sm text-secondary-foreground">
+        <div
+          className="fixed inset-0 z-50 flex items-end"
+          style={{ background: 'oklch(0.05 0.005 150 / 0.65)', backdropFilter: 'blur(16px)' }}
+        >
+          <div className="glass-strong w-full rounded-t-[28px] border-t border-white/10 p-5 pb-10">
+            <p className="mb-3 text-sm font-semibold text-foreground">Lembrete de gastos fixos</p>
+            <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
               {fixedCostReminders.dueToday.map(item => (
-                <li key={item.id}>
-                  Vence hoje: {item.name} - R$ {item.amount.toFixed(2)}
-                </li>
+                <li key={item.id}>Vence hoje: {item.name} — R$ {item.amount.toFixed(2)}</li>
               ))}
               {fixedCostReminders.overdue.map(item => (
-                <li key={item.id}>
-                  Em atraso ha {item.daysOverdue} dia(s): {item.name} - R$ {item.amount.toFixed(2)}
-                </li>
+                <li key={item.id}>Em atraso ha {item.daysOverdue} dia(s): {item.name} — R$ {item.amount.toFixed(2)}</li>
               ))}
             </ul>
             <button
               onClick={() => setShowDueModal(false)}
-              className="mt-4 w-full rounded-xl bg-vanessa-lavender px-4 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-vanessa-lavender/90"
+              className="mt-4 w-full rounded-2xl py-3.5 text-sm font-semibold text-white"
+              style={{
+                background: 'linear-gradient(135deg, oklch(0.38 0.14 150), oklch(0.30 0.12 152))',
+                boxShadow: '0 4px 20px oklch(0.38 0.14 150 / 0.35)',
+              }}
             >
               Entendi
             </button>
