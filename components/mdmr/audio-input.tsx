@@ -122,7 +122,7 @@ export function AudioInput({ onTransactionExtracted }: AudioInputProps) {
         whileTap={{ scale: 0.9 }}
         whileHover={{ scale: 1.05 }}
         onClick={handleRecord}
-        className={`fixed bottom-[calc(env(safe-area-inset-bottom,0px)+88px)] left-1/2 z-40 flex h-16 w-16 -translate-x-1/2 items-center justify-center rounded-full transition-all ${
+        className={`fixed bottom-[calc(env(safe-area-inset-bottom,0px)+92px)] left-1/2 z-40 flex h-16 w-16 -translate-x-1/2 items-center justify-center rounded-full transition-all lg:left-[calc(50%+8rem)] ${
           isRecording
             ? 'glass-strong text-vanessa-danger shadow-[0_0_24px_rgba(180,50,50,0.4)] ring-[1.5px] ring-vanessa-danger/50'
             : 'glass-strong shadow-[0_0_20px_oklch(0.42_0.12_150/0.25)] ring-1 ring-white/[0.12] hover:ring-vanessa-lavender/40 md:bottom-8'
@@ -149,8 +149,8 @@ export function AudioInput({ onTransactionExtracted }: AudioInputProps) {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: [0.8, 1.6], opacity: [0.4, 0] }}
               transition={{ repeat: Infinity, duration: 1.8, delay: i * 0.6, ease: 'easeOut' }}
-              className="fixed left-1/2 z-30 h-16 w-16 -translate-x-1/2 rounded-full border border-vanessa-danger/40"
-              style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 88px)' }}
+              className="fixed left-1/2 z-30 h-16 w-16 -translate-x-1/2 rounded-full border border-vanessa-danger/40 lg:left-[calc(50%+8rem)]"
+              style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 92px)' }}
             />
           ))}
       </AnimatePresence>

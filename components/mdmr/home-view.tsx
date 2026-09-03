@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { ArrowUp, ArrowDown, Wallet, Brain, Sparkles, CloudRain, Leaf, Meh, Trash2, LogOut } from 'lucide-react'
 import type { MoodType, Transaction } from '@/lib/types'
 import { MOOD_CONFIG } from '@/lib/types'
+import { Odometer } from './odometer'
 import {
   getFixedCostReminders,
   getLatestMood,
@@ -160,9 +161,10 @@ export function HomeView({ onChangeMood, onLogout, transactions, onClearHistory,
             ))}
           </div>
 
-          <p className="mb-5 text-[34px] font-semibold leading-none tracking-tight text-foreground">
-            R$ {displayedBalance.toFixed(2)}
-          </p>
+          <Odometer
+            value={displayedBalance}
+            className={`mb-5 text-[34px] leading-none ${displayedBalance < 0 ? 'text-vanessa-danger' : 'text-foreground'}`}
+          />
 
           {/* Cofrinho toggle */}
           <div className="glass-card mb-4 flex items-center justify-between rounded-2xl px-4 py-3">
