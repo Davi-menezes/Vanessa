@@ -13,12 +13,12 @@ const iconMap: Record<MoodType, React.ReactNode> = {
   calmaria: <Leaf className="h-7 w-7" />,
 }
 
-const moodGlow: Record<MoodType, string> = {
-  ansiedade: 'oklch(0.68 0.12 85 / 0.18)',
-  tedio: 'oklch(0.50 0.02 200 / 0.18)',
-  euforia: 'oklch(0.65 0.18 150 / 0.22)',
-  tristeza: 'oklch(0.55 0.10 155 / 0.18)',
-  calmaria: 'oklch(0.45 0.14 150 / 0.22)',
+const moodTint: Record<MoodType, string> = {
+  ansiedade: 'border-vanessa-warning/25 bg-vanessa-warning/[0.06] text-vanessa-warning',
+  tedio: 'border-white/10 bg-white/[0.03] text-muted-foreground',
+  euforia: 'border-vanessa-glow/25 bg-vanessa-glow/[0.06] text-vanessa-glow',
+  tristeza: 'border-vanessa-calm/25 bg-vanessa-calm/[0.06] text-vanessa-calm',
+  calmaria: 'border-vanessa-success/25 bg-vanessa-success/[0.06] text-vanessa-success',
 }
 
 interface MoodCheckinProps {
@@ -32,23 +32,16 @@ export function MoodCheckin({ onSelectMood }: MoodCheckinProps) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="flex min-h-[100dvh] flex-col items-center justify-center px-6"
+      transition={{ duration: 0.4 }}
+      className="relative flex min-h-screen flex-col items-center justify-center px-6"
     >
-      {/* Canopy glow behind */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background: 'radial-gradient(ellipse 600px 400px at 50% 40%, oklch(0.28 0.14 150 / 0.25), transparent 70%)',
-          filter: 'blur(60px)',
-        }}
-      />
+      <div className="jungle-scene" aria-hidden />
 
       <motion.p
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.15, duration: 0.5, ease: 'easeOut' }}
-        className="mb-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-muted-foreground/60"
+        transition={{ delay: 0.1 }}
+        className="relative mb-2 text-[11px] font-medium uppercase tracking-[0.22em] text-muted-foreground/70"
       >
         mdmr
       </motion.p>
@@ -56,51 +49,28 @@ export function MoodCheckin({ onSelectMood }: MoodCheckinProps) {
       <motion.h1
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.25, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="mb-12 text-center text-[28px] font-light leading-relaxed text-foreground"
+        transition={{ delay: 0.2 }}
+        className="relative mb-12 whitespace-pre-line text-center text-[26px] font-light leading-relaxed text-foreground"
       >
-        Como voce esta{'\n'}se sentindo?
+        {'Como voce esta\nse sentindo?'}
       </motion.h1>
 
-      <div className="grid w-full max-w-xs grid-cols-2 gap-3">
-        {moods.map((mood, i) => {
-          const isCalmaria = mood === 'calmaria'
-          return (
-            <motion.button
-              key={mood}
-              initial={{ opacity: 0, scale: 0.7, y: 24 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{
-                delay: 0.4 + i * 0.09,
-                type: 'spring',
-                stiffness: 280,
-                damping: 22,
-              }}
-              whileTap={{ scale: 0.90 }}
-              whileHover={{ scale: 1.04, transition: { duration: 0.15 } }}
-              onClick={() => onSelectMood(mood)}
-              className={`flex flex-col items-center gap-3 rounded-[22px] px-4 py-6 ${isCalmaria ? 'col-span-2 flex-row justify-center' : ''}`}
-              style={{
-                background: 'oklch(0.11 0.015 150 / 0.55)',
-                backdropFilter: 'blur(24px) saturate(1.7)',
-                WebkitBackdropFilter: 'blur(24px) saturate(1.7)',
-                border: `1px solid ${moodGlow[mood].replace('0.18', '0.22')}`,
-                boxShadow: [
-                  'inset 0 1px 0 oklch(1 0 0 / 0.12)',
-                  'inset 0 -1px 0 oklch(0 0 0 / 0.28)',
-                  `0 0 24px ${moodGlow[mood]}`,
-                  '0 6px 24px oklch(0 0 0 / 0.40)',
-                ].join(', '),
-                transition: 'box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease',
-              }}
-            >
-              <span className={MOOD_CONFIG[mood].color}>{iconMap[mood]}</span>
-              <span className="text-sm font-medium" style={{ color: 'oklch(0.88 0.02 145)' }}>
-                {MOOD_CONFIG[mood].label}
-              </span>
-            </motion.button>
-          )
-        })}
+      <div className="relative grid w-full max-w-xs grid-cols-2 gap-3">
+        {moods.map((mood, i) => (
+          <motion.button
+            key={mood}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 + i * 0.07, type: 'spring', stiffness: 300, damping: 26 }}
+            whileTap={{ scale: 0.95 }}
+            whileHover={{ y: -2 }}
+            onClick={() => onSelectMood(mood)}
+            className={`glass flex flex-col items-center gap-2.5 rounded-2xl px-4 py-6 transition-colors ${moodTint[mood]} ${mood === 'calmaria' ? 'col-span-2' : ''}`}
+          >
+            {iconMap[mood]}
+            <span className="text-sm font-medium text-foreground">{MOOD_CONFIG[mood].label}</span>
+          </motion.button>
+        ))}
       </div>
     </motion.div>
   )

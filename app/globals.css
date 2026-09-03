@@ -1,57 +1,61 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-/* mdmr - Jungle Glassmorphism */
-/* Deep black forest + #0e450b green — real glass, real depth, real glow */
+/* mdmr — Jungle Glass
+   Real glassmorphism in the cult-ui / skiper style:
+   near-black neutral canvas, white-alpha glass, #0e450b green reserved for accents. */
 
 @theme inline {
   --font-sans: 'Plus Jakarta Sans', 'Geist', 'Geist Fallback', sans-serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback', monospace;
 
-  /* Base surfaces */
+  /* Neutral, near-black jungle base (not tinted green everywhere) */
   --color-background: oklch(0.08 0.008 150);
-  --color-foreground: oklch(0.92 0.02 145);
-  --color-card: oklch(0.13 0.018 150);
-  --color-card-foreground: oklch(0.92 0.02 145);
-  --color-popover: oklch(0.13 0.018 150);
-  --color-popover-foreground: oklch(0.92 0.02 145);
-  --color-primary: oklch(0.45 0.14 150);         /* #0e450b family */
-  --color-primary-foreground: oklch(0.99 0.005 145);
-  --color-secondary: oklch(0.16 0.022 150);
-  --color-secondary-foreground: oklch(0.85 0.03 145);
-  --color-muted: oklch(0.17 0.022 150);
-  --color-muted-foreground: oklch(0.58 0.035 150);
-  --color-accent: oklch(0.42 0.12 152);
-  --color-accent-foreground: oklch(0.99 0.005 145);
-  --color-destructive: oklch(0.55 0.18 25);
-  --color-destructive-foreground: oklch(0.98 0.01 25);
-  --color-border: oklch(0.22 0.025 150);
-  --color-input: oklch(0.18 0.025 150);
-  --color-ring: oklch(0.45 0.14 150);
-  --color-chart-1: oklch(0.48 0.13 150);
-  --color-chart-2: oklch(0.42 0.12 152);
-  --color-chart-3: oklch(0.50 0.11 160);
-  --color-chart-4: oklch(0.65 0.10 85);
-  --color-chart-5: oklch(0.55 0.18 25);
-  --radius: 1rem;
+  --color-foreground: oklch(0.95 0.005 150);
+  --color-card: oklch(0.11 0.008 150);
+  --color-card-foreground: oklch(0.95 0.005 150);
+  --color-popover: oklch(0.11 0.008 150);
+  --color-popover-foreground: oklch(0.95 0.005 150);
+  --color-primary: oklch(0.42 0.13 150);            /* jungle green #0e450b */
+  --color-primary-foreground: oklch(0.98 0.01 150);
+  --color-secondary: oklch(0.15 0.008 150);
+  --color-secondary-foreground: oklch(0.92 0.01 150);
+  --color-muted: oklch(0.15 0.008 150);
+  --color-muted-foreground: oklch(0.62 0.02 150);
+  --color-accent: oklch(0.16 0.012 150);
+  --color-accent-foreground: oklch(0.95 0.01 150);
+  --color-destructive: oklch(0.55 0.19 27);
+  --color-destructive-foreground: oklch(0.98 0.01 27);
+  --color-border: oklch(0.98 0.005 150 / 0.08);     /* white-alpha border */
+  --color-input: oklch(0.98 0.005 150 / 0.10);
+  --color-ring: oklch(0.52 0.13 150);
+  --radius: 0.9rem;
 
+  /* Charts */
+  --color-chart-1: oklch(0.55 0.13 150);
+  --color-chart-2: oklch(0.70 0.10 90);
+  --color-chart-3: oklch(0.45 0.10 160);
+  --color-chart-4: oklch(0.65 0.15 75);
+  --color-chart-5: oklch(0.60 0.18 25);
+
+  /* Sidebar */
   --color-sidebar: oklch(0.08 0.008 150);
-  --color-sidebar-foreground: oklch(0.92 0.02 145);
-  --color-sidebar-primary: oklch(0.45 0.14 150);
-  --color-sidebar-primary-foreground: oklch(0.99 0.005 145);
-  --color-sidebar-accent: oklch(0.16 0.022 150);
-  --color-sidebar-accent-foreground: oklch(0.85 0.03 145);
-  --color-sidebar-border: oklch(0.22 0.025 150);
-  --color-sidebar-ring: oklch(0.45 0.14 150);
+  --color-sidebar-foreground: oklch(0.95 0.005 150);
+  --color-sidebar-primary: oklch(0.52 0.13 150);
+  --color-sidebar-primary-foreground: oklch(0.98 0.01 150);
+  --color-sidebar-accent: oklch(0.14 0.010 150);
+  --color-sidebar-accent-foreground: oklch(0.92 0.01 150);
+  --color-sidebar-border: oklch(0.98 0.005 150 / 0.08);
+  --color-sidebar-ring: oklch(0.52 0.13 150);
 
-  /* mdmr jungle tokens */
-  --color-vanessa-calm: oklch(0.52 0.10 158);
-  --color-vanessa-warning: oklch(0.65 0.11 85);
-  --color-vanessa-danger: oklch(0.58 0.18 25);
-  --color-vanessa-success: oklch(0.48 0.14 150);      /* jungle green primary */
-  --color-vanessa-lavender: oklch(0.38 0.13 150);     /* deep #0e450b */
-  --color-vanessa-deep-blue: oklch(0.08 0.008 150);   /* near black forest */
-  --color-vanessa-glow: oklch(0.68 0.12 150);         /* luminous canopy */
+  /* mdmr semantic tokens (names kept; values = jungle) */
+  --color-vanessa-calm: oklch(0.55 0.09 200);      /* soft teal-blue */
+  --color-vanessa-warning: oklch(0.72 0.13 80);    /* amber */
+  --color-vanessa-danger: oklch(0.62 0.18 25);
+  --color-vanessa-success: oklch(0.70 0.15 150);   /* bright leaf green (text/icons) */
+  --color-vanessa-lavender: oklch(0.70 0.15 150);  /* main accent = bright jungle green */
+  --color-vanessa-deep-blue: oklch(0.08 0.008 150);
+  --color-vanessa-glow: oklch(0.80 0.13 150);
 
   --radius-sm: calc(var(--radius) - 6px);
   --radius-md: calc(var(--radius) - 4px);
@@ -65,199 +69,126 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "ss01", "ss02", "cv01", "cv02";
+    @apply bg-background text-foreground antialiased;
   }
 }
 
-/* ————————————————————————————————
-   JUNGLE BACKGROUND SCENE
-   Multi-layer animated canopy blobs + noise texture
-————————————————————————————— */
-body {
-  background-color: oklch(0.07 0.006 150);
-  overflow-x: hidden;
-}
-
-body::before {
-  content: '';
+/* ————————————————————————————————————
+   BACKGROUND SCENE — dark jungle, subtle.
+   A fixed layer of soft green orbs far below the UI.
+——————————————————————————————————— */
+.jungle-scene {
   position: fixed;
   inset: 0;
-  z-index: 0;
-  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
   background:
-    /* Canopy top-left */
-    radial-gradient(ellipse 900px 600px at 8% -15%, oklch(0.32 0.16 150 / 0.55), transparent 65%),
-    /* Canopy right edge */
-    radial-gradient(ellipse 700px 900px at 115% 30%, oklch(0.26 0.13 150 / 0.45), transparent 60%),
-    /* Deep forest floor */
-    radial-gradient(ellipse 800px 600px at 50% 130%, oklch(0.20 0.10 150 / 0.50), transparent 65%),
-    /* Mist middle */
-    radial-gradient(ellipse 600px 400px at 60% 55%, oklch(0.18 0.06 152 / 0.20), transparent 60%);
-  animation: canopy-drift 24s ease-in-out infinite alternate;
+    radial-gradient(1200px 800px at 80% -20%, oklch(0.28 0.10 150 / 0.22), transparent 60%),
+    radial-gradient(900px 700px at -10% 110%, oklch(0.22 0.09 150 / 0.18), transparent 60%),
+    oklch(0.075 0.006 150);
 }
 
-body::after {
+.jungle-scene::before {
   content: '';
-  position: fixed;
+  position: absolute;
   inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  /* Subtle forest noise texture using SVG data URI */
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E");
-  background-size: 512px 512px;
-  opacity: 0.4;
+  background: radial-gradient(600px 600px at 50% 0%, oklch(0.32 0.12 150 / 0.10), transparent 65%);
+  animation: aurora 18s ease-in-out infinite alternate;
 }
 
-@keyframes canopy-drift {
-  0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
-  33%  { transform: translate(12px, -8px) rotate(0.5deg) scale(1.02); }
-  66%  { transform: translate(-8px, 12px) rotate(-0.3deg) scale(0.99); }
-  100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+@keyframes aurora {
+  from { transform: translateY(-6%); opacity: 0.7; }
+  to   { transform: translateY(6%); opacity: 1; }
 }
 
-/* ————————————————————————————————
-   GLASS SYSTEM
-   True glassmorphism: blur, luminance, specular, refraction
-————————————————————————————— */
+/* Film grain — kept very subtle */
+.jungle-scene::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.32;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+}
 
-/* Primary glass surface */
+/* ————————————————————————————————————
+   GLASS SYSTEM — white-alpha glass, the real thing.
+   Pattern used by cult-ui / skiper / Linear:
+   bg = white at 3–6%, border = white at 8–10%,
+   one soft inset top highlight, soft drop shadow.
+——————————————————————————————————— */
+
 .glass {
-  background:
-    linear-gradient(
-      135deg,
-      oklch(1 0 0 / 0.07) 0%,
-      oklch(1 0 0 / 0.02) 50%,
-      oklch(1 0 0 / 0.04) 100%
-    ),
-    oklch(0.14 0.018 150 / 0.65);
-  backdrop-filter: blur(20px) saturate(1.6);
-  -webkit-backdrop-filter: blur(20px) saturate(1.6);
-  border: 1px solid oklch(1 0 0 / 0.10);
-  box-shadow:
-    /* Inner light from top-left */
-    inset 0 1px 0 oklch(1 0 0 / 0.15),
-    inset 1px 0 0 oklch(1 0 0 / 0.06),
-    inset 0 -1px 0 oklch(0 0 0 / 0.30),
-    inset -1px 0 0 oklch(0 0 0 / 0.15),
-    /* Outer depth */
-    0 4px 16px oklch(0 0 0 / 0.40),
-    0 1px 4px oklch(0 0 0 / 0.30),
-    /* Green ambient bounce */
-    0 0 32px oklch(0.38 0.13 150 / 0.08);
-}
-
-/* Stronger glass for modals/sheets */
-.glass-strong {
-  background:
-    linear-gradient(
-      135deg,
-      oklch(1 0 0 / 0.09) 0%,
-      oklch(1 0 0 / 0.03) 50%,
-      oklch(1 0 0 / 0.06) 100%
-    ),
-    oklch(0.12 0.014 150 / 0.78);
-  backdrop-filter: blur(32px) saturate(1.8);
-  -webkit-backdrop-filter: blur(32px) saturate(1.8);
-  border: 1px solid oklch(1 0 0 / 0.12);
-  box-shadow:
-    inset 0 1px 0 oklch(1 0 0 / 0.18),
-    inset 1px 0 0 oklch(1 0 0 / 0.08),
-    inset 0 -1px 0 oklch(0 0 0 / 0.40),
-    inset -1px 0 0 oklch(0 0 0 / 0.20),
-    0 8px 32px oklch(0 0 0 / 0.50),
-    0 2px 8px oklch(0 0 0 / 0.40),
-    0 0 48px oklch(0.35 0.12 150 / 0.12);
-}
-
-/* Glass with jungle green neon border */
-.glass-glow {
-  box-shadow:
-    inset 0 1px 0 oklch(1 0 0 / 0.12),
-    inset 1px 0 0 oklch(1 0 0 / 0.06),
-    inset 0 -1px 0 oklch(0 0 0 / 0.25),
-    0 4px 16px oklch(0 0 0 / 0.40),
-    0 0 0 1px oklch(0.38 0.13 150 / 0.20),
-    0 0 24px oklch(0.38 0.13 150 / 0.15),
-    0 0 64px oklch(0.38 0.13 150 / 0.08);
-}
-
-/* Subtle card glass (for list items, small surfaces) */
-.glass-card {
-  background:
-    linear-gradient(
-      145deg,
-      oklch(1 0 0 / 0.06) 0%,
-      oklch(1 0 0 / 0.01) 100%
-    ),
-    oklch(0.12 0.016 150 / 0.55);
-  backdrop-filter: blur(14px) saturate(1.4);
-  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  background: oklch(1 0 0 / 0.04);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
   border: 1px solid oklch(1 0 0 / 0.08);
   box-shadow:
-    inset 0 1px 0 oklch(1 0 0 / 0.10),
-    inset 0 -1px 0 oklch(0 0 0 / 0.30),
-    0 2px 12px oklch(0 0 0 / 0.35);
+    inset 0 1px 0 oklch(1 0 0 / 0.06),
+    0 8px 24px oklch(0 0 0 / 0.30);
 }
 
-/* ————————————————————————————————
-   INTERACTIVE STATES
-————————————————————————————— */
-.glass-card-hover {
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
-}
-.glass-card-hover:hover {
-  border-color: oklch(1 0 0 / 0.14);
+.glass-strong {
+  background: oklch(0.10 0.008 150 / 0.72);
+  backdrop-filter: blur(28px) saturate(1.5);
+  -webkit-backdrop-filter: blur(28px) saturate(1.5);
+  border: 1px solid oklch(1 0 0 / 0.10);
   box-shadow:
-    inset 0 1px 0 oklch(1 0 0 / 0.16),
-    inset 0 -1px 0 oklch(0 0 0 / 0.25),
-    0 6px 24px oklch(0 0 0 / 0.45),
-    0 0 16px oklch(0.38 0.13 150 / 0.12);
+    inset 0 1px 0 oklch(1 0 0 / 0.08),
+    0 24px 64px oklch(0 0 0 / 0.45);
 }
 
-/* Neon green focus ring */
-.glass-focus {
+.glass-card {
+  background: oklch(1 0 0 / 0.03);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  border: 1px solid oklch(1 0 0 / 0.07);
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.05);
+  transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+}
+
+.glass-card:hover {
+  background: oklch(1 0 0 / 0.05);
+  border-color: oklch(1 0 0 / 0.12);
+}
+
+/* Accent ring — a whisper of green, once. Not everywhere. */
+.ring-jungle {
+  border: 1px solid oklch(0.52 0.13 150 / 0.35);
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.06),
+    0 0 24px oklch(0.45 0.12 150 / 0.12);
+}
+
+/* Buttons */
+.btn-primary {
+  background: linear-gradient(180deg, oklch(0.35 0.12 150), oklch(0.30 0.11 150));
+  color: oklch(0.97 0.02 150);
+  border: 1px solid oklch(0.55 0.14 150 / 0.30);
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.10),
+    0 4px 16px oklch(0.35 0.12 150 / 0.25);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(180deg, oklch(0.38 0.13 150), oklch(0.32 0.12 150));
+}
+
+/* Inputs */
+.input-glass {
+  background: oklch(1 0 0 / 0.03);
+  border: 1px solid oklch(1 0 0 / 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.04);
+}
+.input-glass:focus-within, .input-glass:focus {
+  border-color: oklch(0.52 0.13 150 / 0.45);
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.04), 0 0 0 3px oklch(0.50 0.13 150 / 0.15);
   outline: none;
 }
-.glass-focus:focus-within,
-.glass-focus:focus {
-  border-color: oklch(0.45 0.14 150 / 0.50) !important;
-  box-shadow:
-    inset 0 1px 0 oklch(1 0 0 / 0.15),
-    inset 0 -1px 0 oklch(0 0 0 / 0.25),
-    0 0 0 3px oklch(0.45 0.14 150 / 0.15),
-    0 4px 16px oklch(0 0 0 / 0.40),
-    0 0 24px oklch(0.45 0.14 150 / 0.12);
-}
 
-/* ————————————————————————————————
-   PRIMITIVE OVERRIDES
-   Buttons, inputs, pills — all glass
-————————————————————————————— */
-input, textarea, select {
-  &:focus {
-    outline: none;
-    border-color: oklch(0.45 0.14 150 / 0.50) !important;
-    box-shadow:
-      0 0 0 3px oklch(0.45 0.14 150 / 0.12),
-      0 0 20px oklch(0.45 0.14 150 / 0.08) !important;
-  }
-}
-
-/* Smooth everything */
-* {
-  transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* Hide scrollbar */
+/* Scrollbars hidden (mobile feel) */
+html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
 body::-webkit-scrollbar { display: none; }
-body {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+body { -ms-overflow-style: none; scrollbar-width: none; }
